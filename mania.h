@@ -123,7 +123,7 @@ signed char mni_generate(char *filename)
 {
 FILE *in;
 FILE *tri, *box;
-char c;
+int c;
 char str[RAYDIUM_MAX_NAME_LEN];
 float x,y,z;
 float vx,vy,vz;
@@ -135,20 +135,12 @@ int rot,flags,type;
 int obj;
 int i;
 
-raydium_log("mni_gen: opening '%s'",filename);
 in=raydium_file_fopen(filename,"rt");
 if(!in)
     {
     raydium_log("mni_gen: unable to open '%s'",filename);
     return 0;
     }
-
-{
-int b1=fgetc(in), b2=fgetc(in);
-raydium_log("mni_gen: first two bytes of '%s': 0x%02x 0x%02x",filename,b1,b2);
-ungetc(b2,in);
-ungetc(b1,in);
-}
 
 tri=fopen(raydium_file_home_path("mania.tri"),"wt");
 if(!tri)
