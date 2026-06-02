@@ -164,15 +164,14 @@ if(PHP_EXTRACTED_DIR)
     COMMAND cd "${PHP_SOURCE_DIR}" &&
             CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
                         --without-pear --disable-cgi --disable-cli
-                        --disable-phpdbg --disable-fpm
                         --disable-simplexml --disable-xmlreader
                         --disable-xmlwriter --disable-dom --with-zlib
                         --enable-ftp --with-curl --enable-zip
-                        --enable-soap --disable-phar --disable-crypt
+                        --enable-soap --disable-phar
                         --without-gd --without-jpeg-dir
                         --without-png-dir
                         --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1"
+    COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
     BYPRODUCTS "${PHP_LIBRARY}"
     WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
     COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
@@ -214,8 +213,6 @@ else()
                           --without-pear
                           --disable-cgi
                           --disable-cli
-                          --disable-phpdbg
-                          --disable-fpm
                           --disable-simplexml
                           --disable-xmlreader
                           --disable-xmlwriter
@@ -226,12 +223,11 @@ else()
                           --enable-zip
                           --enable-soap
                           --disable-phar
-                          --disable-crypt
                           --without-gd
                           --without-jpeg-dir
                           --without-png-dir
                           --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1
+    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
     BUILD_IN_SOURCE      TRUE
     INSTALL_COMMAND      ""
     LOG_CONFIGURE        1
