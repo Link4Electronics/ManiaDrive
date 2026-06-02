@@ -10,3 +10,6 @@
 #ifndef uint
 typedef unsigned int uint;
 #endif
+#ifndef HAVE_BUNDLED_PCRE
+# define HAVE_BUNDLED_PCRE 1
+#endif
