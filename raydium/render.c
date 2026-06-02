@@ -554,7 +554,7 @@ void raydium_render_vblank(signed char enable)
 {
 enable=(enable?1:0);
 #ifndef IPHONEOS
-# ifndef WIN32
+# if !defined(WIN32) && !defined(APPLE)
 if(glxewIsSupported("GLX_SGI_swap_control"))
     {
     glXSwapIntervalSGI(enable);

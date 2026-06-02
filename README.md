@@ -14,8 +14,8 @@ Open-source racing game built on the Raydium 3D engine.
 - libjpeg, libpng, zlib
 - libcurl, libxml2
 - libvorbis, libvorbisfile, libogg
-- X11, Xinerama
-- v4l-utils (libv4lconvert)
+- X11, Xinerama (not needed on macOS)
+- v4l-utils (libv4lconvert, not needed on macOS)
 - bison
 - re2c
 
@@ -72,6 +72,7 @@ Kids mode unlocks all tracks (no need to complete beginners mode first) and show
 | Option | Default | Description |
 |--------|---------|-------------|
 | `KIDS_MODE` | `OFF` | Unlock all tracks, add speed/accel sliders |
+| `MANIADRIVE_MACOS_BUNDLE` | `OFF` | Build macOS .app bundle (macOS only) |
 
 ### Running
 
@@ -93,6 +94,18 @@ cp *.php ~/.mania_drive/data/
 # or symlink:
 # ln -s "$PWD" ~/.mania_drive/data/.
 ```
+
+### macOS
+
+Requires Xcode (or Command Line Tools) and [Homebrew](https://brew.sh):
+
+```sh
+brew install cmake glew freealut libjpeg libpng curl libxml2 libvorbis libogg bison
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+For an `.app` bundle: `cmake -B build -DMANIADRIVE_MACOS_BUNDLE=ON`.
 
 ### Cross-compilation
 

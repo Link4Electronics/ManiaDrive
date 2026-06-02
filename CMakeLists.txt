@@ -11,6 +11,28 @@ list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 # ─── Options ──────────────────────────────────────────────
 option(KIDS_MODE  "Enable kids mode (unlock all tracks, speed/accel sliders)" OFF)
 
+# ─── macOS / PowerPC support ────────────────────────────
+option(MANIADRIVE_MACOS_BUNDLE "Create macOS .app bundle" OFF)
+
+if(APPLE)
+  set(CMAKE_FIND_FRAMEWORK LAST)
+
+  if(MANIADRIVE_MACOS_BUNDLE)
+    set(MANIADRIVE_BUNDLE_DIR "${CMAKE_BINARY_DIR}/${PROJECT_NAME}.app")
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${MANIADRIVE_BUNDLE_DIR}/Contents/MacOS")
+  endif()
+
+  if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)")
+    set(MANIADRIVE_ARCH_PPC TRUE)
+    message(STATUS "ManiaDrive: detected PowerPC (big-endian) architecture")
+  elseif(CMAKE_OSX_ARCHITECTURES MATCHES "^(ppc|ppc64)")
+    set(MANIADRIVE_ARCH_PPC TRUE)
+    message(STATUS "ManiaDrive: targeting PowerPC (big-endian) via Xcode")
+  else()
+    set(MANIADRIVE_ARCH_PPC FALSE)
+  endif()
+endif()
+
 # ─── C Standard ───────────────────────────────────────────
 # The codebase uses GNU89 extensions and needs -fcommon for GCC 10+
 add_compile_options(-fcommon)
@@ -57,7 +79,9 @@ find_package(PNG     REQUIRED)
 find_package(ZLIB    REQUIRED)
 find_package(CURL    REQUIRED)
 find_package(LibXml2 REQUIRED)
-find_package(X11     REQUIRED)
+if(NOT APPLE)
+  find_package(X11     REQUIRED)
+endif()
 
 find_package(PkgConfig QUIET)
 if(PkgConfig_FOUND)
@@ -83,8 +107,10 @@ if(NOT TARGET PkgConfig::V4LCONV)
 endif()
 
 # FindX11 sets X11_Xinerama_LIB and X11_Xrandr_LIB (optional)
-if(X11_Xrandr_FOUND OR X11_Xrandr_LIB)
-  set(HAVE_XRANDR TRUE)
+if(NOT APPLE)
+  if(X11_Xrandr_FOUND OR X11_Xrandr_LIB)
+    set(HAVE_XRANDR TRUE)
+  endif()
 endif()
 
 # ─── ODE (Open Dynamics Engine) ──────────────────────────
@@ -280,10 +306,15 @@ target_compile_definitions(raydium
     ODE_PREDICTION
     REG_API
     DEBUG_PROFILE
-    HAVE_XINERAMA
-    HAVE_DPMS
     RAYPHP_PATH="${CMAKE_SOURCE_DIR}/rayphp"
 )
+
+if(NOT APPLE)
+  target_compile_definitions(raydium PRIVATE
+    HAVE_XINERAMA
+    HAVE_DPMS
+  )
+endif()
 
 # Link system libraries
 target_link_libraries(raydium
@@ -297,8 +328,16 @@ target_link_libraries(raydium
     PNG::PNG
     CURL::libcurl
     LibXml2::LibXml2
-    X11::X11
 )
+
+if(APPLE)
+  target_link_libraries(raydium PRIVATE
+    "-framework Carbon"
+    "-framework AGL"
+  )
+else()
+  target_link_libraries(raydium PRIVATE X11::X11)
+endif()
 
 if(TARGET PkgConfig::ALUT)
   target_link_libraries(raydium PRIVATE PkgConfig::ALUT)
@@ -331,15 +370,19 @@ elseif(V4LCONV_LIBRARY)
   target_link_libraries(raydium PRIVATE ${V4LCONV_LIBRARY})
 endif()
 
-target_link_libraries(raydium
-  PRIVATE
-    m
-    resolv
-    crypt
-    dl
-    pthread
-    stdc++
-)
+if(APPLE)
+  target_link_libraries(raydium PRIVATE m pthread)
+else()
+  target_link_libraries(raydium
+    PRIVATE
+      m
+      resolv
+      crypt
+      dl
+      pthread
+      stdc++
+  )
+endif()
 
 if(X11_Xrandr_LIB)
   target_link_libraries(raydium PRIVATE ${X11_Xrandr_LIB})
@@ -392,6 +435,20 @@ else()
 endif()
 
 add_mania_executable(level_editor mania2.c)
+
+# ─── macOS .app bundle ────────────────────────────────────
+if(APPLE AND MANIADRIVE_MACOS_BUNDLE)
+  set_target_properties(mania_drive PROPERTIES
+    MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/cmake/Info.plist.in"
+    OUTPUT_NAME "ManiaDrive"
+  )
+  set_target_properties(level_editor PROPERTIES
+    MACOSX_BUNDLE TRUE
+    MACOSX_BUNDLE_INFO_PLIST "${CMAKE_SOURCE_DIR}/cmake/Info.plist.in"
+    OUTPUT_NAME "LevelEditor"
+  )
+endif()
 
 # ─── Install ──────────────────────────────────────────────
 include(GNUInstallDirs)

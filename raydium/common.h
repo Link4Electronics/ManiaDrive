@@ -85,7 +85,9 @@
 #include <GL/glew.h>
 #ifndef IPHONEOS
 # ifndef WIN32
-#  include <GL/glxew.h>
+#  ifndef APPLE
+#   include <GL/glxew.h>
+#  endif
 # else
 #  include <GL/wglew.h>
 # endif
