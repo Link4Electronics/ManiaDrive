@@ -134,7 +134,6 @@ if(PHP_SUPPORT)
 
   ExternalProject_Add(libphp5
     URL                   file://${PHP_TARBALL}
-    URL_MD5               36db7e28bbdcfd517b2b3c8bf958ccb2
     SOURCE_DIR            ${PHP_SOURCE_DIR}
     CONFIGURE_COMMAND     cd ${PHP_SOURCE_DIR} && ./configure
                           --enable-embed=static
