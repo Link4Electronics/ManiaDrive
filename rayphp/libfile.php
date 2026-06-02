@@ -144,29 +144,41 @@ function valid_entry($r)
     return false;
 }
 
-// unzip a given input
+// unzip a given input (pure-PHP, no temp files, works on all architectures)
 function gzdecode($in)
 {
-  $tmp="";
-  raydium_file_home_path_cpy("tmp.tmp.gz",&$tmp);
-  $fp=fopen($tmp,"wb");
-  if(!$fp) 
-    {
-    echo "ERROR: Can't create '$tmp' file !";
-    return false;
-    }
-  fwrite($fp,$in);
-  fclose($fp);
+  // Not gzipped? return as-is
+  if(strlen($in)<2 || ord($in[0])!=0x1f || ord($in[1])!=0x8b)
+    return $in;
 
-  $fp=gzopen($tmp,"rb");
-  if(!$fp) return false;
-  while(!gzeof($fp))
+  $flags=ord($in[3]);
+  $header_len=10;
+
+  if($flags & 4) // FEXTRA
     {
-      $data.=gzread($fp,128);
+    $xlen=ord($in[$header_len]) | (ord($in[$header_len+1])<<8);
+    $header_len+=2+$xlen;
     }
-  gzclose($fp);
-  unlink($tmp);
-  return $data;
+  if($flags & 8) // FNAME
+    {
+    while($header_len<strlen($in) && ord($in[$header_len]))
+      $header_len++;
+    $header_len++; // null terminator
+    }
+  if($flags & 16) // FCOMMENT
+    {
+    while($header_len<strlen($in) && ord($in[$header_len]))
+      $header_len++;
+    $header_len++;
+    }
+  if($flags & 2) // FHCRC
+    $header_len+=2;
+
+  if($header_len>=strlen($in)-8)
+    return false;
+
+  $deflated=substr($in,$header_len,-8);
+  return gzinflate($deflated);
 }
 
 function ftp_upload($repos,$local,$distant)
