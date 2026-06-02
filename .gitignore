@@ -1,0 +1,13 @@
+build/
+*.bin
+*.o
+*.so
+*.so.*
+*.a
+configure.c
+configure.bin
+configure.log
+configure.conf
+test
+compile_commands.json
+

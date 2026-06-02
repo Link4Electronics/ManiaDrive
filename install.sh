@@ -1,7 +1,8 @@
 #!/bin/sh
 
 # ----------------------------
-# Supposed to be called by Makefile "install" target
+# Superseded by: cmake --install
+# Kept for reference / legacy packaging.
 # ----------------------------
 
 if [ ! -f configure.conf ]; then

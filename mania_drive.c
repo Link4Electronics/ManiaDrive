@@ -39,6 +39,11 @@ char *version="ManiaDrive 1.3custom";
 
 #define MAX_PROPS       100
 
+#ifdef KIDS_MODE
+float car_top_speed= 55;
+float car_acceleration= 0.12;
+#endif
+
 GLfloat sun[]={1.0,0.9,0.5,1.0};
 GLfloat amb[]={1.0,0.0,0.0,1.0};
 GLfloat tmp2[]={1.0,1.0,1.0,1.0};
@@ -547,6 +552,11 @@ mode=MODE_NET;
 
 void btnDriveSolo(raydium_gui_Object *w)
 {
+#ifdef KIDS_MODE
+char str[RAYDIUM_MAX_NAME_LEN];
+car_top_speed=raydium_gui_read_name("menu","trkCarSpeed",str);
+car_acceleration=raydium_gui_read_name("menu","trkCarAccel",str) / 100.0;
+#endif
 drive(w->name);
 mode=MODE_SOLO;
 }
@@ -1070,7 +1080,11 @@ for(i=0;i<len;i++)
     raydium_parser_cut(ret+last,part1,part2,';');
     raydium_gui_widget_sizes(10,4,12);
     candrive=(part2[1]!='4');
+#ifdef KIDS_MODE
+    raydium_gui_button_create(part1,handle,x1,pos,gettext("Drive"),btnDriveSolo);
+#else
     raydium_gui_button_create(part1,handle,x1,pos,(candrive?gettext("Drive"):gettext("-")),(candrive?btnDriveSolo:btnCantDrive));
+#endif
 
     part1[0]='*'+id; // avoid name collision
     strcpy(part3,part2);
@@ -1103,6 +1117,7 @@ raydium_gui_label_create("lblPro",handle,80,88,gettext("Pro"),0.3,0,0);
 
 completed=build_gui_Story_sub(handle,STORY_FILE_BEG,2, 33,0);
 
+#ifndef KIDS_MODE
 if(completed)
     {
     raydium_gui_widget_sizes(0,0,16);
@@ -1112,6 +1127,19 @@ if(completed)
     raydium_gui_window_OnDelete_name("menu",video_beg_delete);
     raydium_gui_label_create("lblOkBeg",handle,27,45,gettext("Beginners mode completed !"),0,0,0);
     }
+#endif
+
+#ifdef KIDS_MODE
+raydium_gui_label_create("lblStats",handle,28,48,gettext("Stats"),0.3,0,0);
+raydium_gui_widget_sizes(0,0,18);
+raydium_gui_label_create("LblSpeed",handle,28,40,gettext("Max speed:"),0,0,0);
+raydium_gui_widget_sizes(20,2,0);
+raydium_gui_track_create("trkCarSpeed",handle,28,32, 10,1000,car_top_speed);
+raydium_gui_widget_sizes(0,0,18);
+raydium_gui_label_create("LblAccel",handle,28,28,gettext("Accel:"),0,0,0);
+raydium_gui_widget_sizes(20,2,0);
+raydium_gui_track_create("trkCarAccel",handle,28,20, 0,90,car_acceleration*100);
+#endif
 
 completed=build_gui_Story_sub(handle,STORY_FILE_PRO,52,83,1);
 
@@ -1123,6 +1151,7 @@ raydium_gui_button_create("btnBackToMain",handle,5,3,gettext("<"),btnBackToMainM
 
 gui_start();
 
+#ifndef KIDS_MODE
 if(completed && !congrats)
     {
     congrats=1;
@@ -1130,6 +1159,7 @@ if(completed && !congrats)
     raydium_log("Completed !");
     build_gui_StoryCompleted();
     }
+#endif
 }
 
 
@@ -2407,19 +2437,32 @@ if(vue==3 || vue==4 || vue==5 || vue==6)
 if(game_state==GAME_END)
     raydium_joy_y=raydium_joy_x=0;
 speed=0;
+#ifdef KIDS_MODE
+accel=car_acceleration;
+#else
 accel=0.12;
+#endif
 
     if(raydium_joy_y>0.3)
         {
+#ifdef KIDS_MODE
+        speed=raydium_joy_y*car_top_speed;
+#else
         speed=raydium_joy_y*55;
+#endif
         raydium_ode_motor_power_max_name("moteur",accel);
         raydium_particle_generator_enable_name("corps",1);
         }
     else
     if(raydium_joy_y<0.3)
         {
+#ifdef KIDS_MODE
+        speed=raydium_joy_y*car_top_speed/11;
+        raydium_ode_motor_power_max_name("moteur",car_acceleration/0.6 * -raydium_joy_y);
+#else
         speed=raydium_joy_y*5;
         raydium_ode_motor_power_max_name("moteur",0.2 * -raydium_joy_y);
+#endif
         raydium_particle_generator_enable_name("corps",0);
         }
     else

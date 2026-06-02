@@ -15,7 +15,7 @@ char *title="CQFD Corp. Mania2";
 #ifdef WIN32
 #define MANIA_BINARY "mania_drive.exe"
 #else
-#define MANIA_BINARY "./mania_drive.static"
+#define MANIA_BINARY "mania_drive"
 #endif
 
 
@@ -192,7 +192,7 @@ raydium_gui_label_create("lblh3",handle,50,y-=YDEC,"arrows : move block",0,0,0);
 raydium_gui_label_create("lblh4",handle,50,y-=YDEC,"pageUp/pageDown : change block",0,0,0);
 raydium_gui_label_create("lbli4",handle,50,y-=YDEC,"home/end : move block up and down (move view to see)",0,0,0);
 raydium_gui_label_create("lblh5",handle,50,y-=YDEC,"d : delete block",0,0,0);
-raydium_gui_label_create("lblh6",handle,50,y-=YDEC,"tab : rotate block (90°)",0,0,0);
+raydium_gui_label_create("lblh6",handle,50,y-=YDEC,"tab : rotate block (90ï¿½)",0,0,0);
 raydium_gui_label_create("lblh7",handle,50,y-=YDEC,"space : add block",0,0,0);
 raydium_gui_label_create("lblh8",handle,50,y-=YDEC,"enter : switch between blocks and entities",0,0,0);
 raydium_gui_label_create("lbli8",handle,50,y-=YDEC,"m : open menu",0,0,0);
