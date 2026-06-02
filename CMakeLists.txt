@@ -309,9 +309,12 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-# php5 symbols resolved at executable link time, not in the shared lib
-target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
-
+# Force all php5 objects into libraydium.so to avoid hidden-symbol
+# errors (e.g. _emalloc) on powerpc64 ELFv2
+target_link_options(raydium PRIVATE
+  "SHELL:-Wl,--whole-archive $<TARGET_FILE:php5> -Wl,--no-whole-archive"
+)
+add_dependencies(raydium php5)
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -321,7 +324,7 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
 
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
@@ -346,7 +349,7 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
 
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
