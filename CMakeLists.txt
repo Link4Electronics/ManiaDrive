@@ -321,6 +321,7 @@ target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 # errors (e.g. _emalloc) on powerpc64 ELFv2
 target_link_options(raydium PRIVATE
   "SHELL:-Wl,--whole-archive $<TARGET_FILE:php5> -Wl,--no-whole-archive"
+  "LINKER:--allow-multiple-definition"
 )
 add_dependencies(raydium php5)
 
