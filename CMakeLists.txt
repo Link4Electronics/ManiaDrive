@@ -168,7 +168,7 @@ if(PHP_EXTRACTED_DIR)
                         --disable-simplexml --disable-xmlreader
                         --disable-xmlwriter --disable-dom --with-zlib
                         --enable-ftp --with-curl --enable-zip
-                        --enable-soap --disable-phar
+                        --enable-soap --disable-phar --disable-crypt
                         --without-gd --without-jpeg-dir
                         --without-png-dir
                         --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
@@ -226,6 +226,7 @@ else()
                           --enable-zip
                           --enable-soap
                           --disable-phar
+                          --disable-crypt
                           --without-gd
                           --without-jpeg-dir
                           --without-png-dir
