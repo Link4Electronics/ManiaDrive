@@ -88,55 +88,21 @@ if(X11_Xrandr_FOUND OR X11_Xrandr_LIB)
 endif()
 
 # ─── ODE (Open Dynamics Engine) ──────────────────────────
-set(ODE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ODE" CACHE PATH
-  "Path to pre-extracted ODE 0.16+ source tree. Set to empty to search system or fetch.")
-
-if(ODE_SOURCE_DIR)
-  # Use the pre-extracted source directly via add_subdirectory
-  if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
-    set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
-  endif()
-  set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
-  set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
-  set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
-   set(ODE_DOUBLE_PRECISION          OFF CACHE BOOL "" FORCE)
-   set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
-   add_subdirectory("${ODE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/ode-build")
-  if(NOT TARGET ODE::ODE AND TARGET ODE)
-    add_library(ODE::ODE ALIAS ODE)
-  endif()
-else()
-  # Try system-installed ODE first. If not found, download modern ODE.
-  find_package(ODE QUIET)
-  if(NOT ODE_FOUND)
-    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
-      set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
-    endif()
-    include(FetchContent)
-    FetchContent_Declare(
-      ode
-      GIT_REPOSITORY https://bitbucket.org/odedevs/ode.git
-      GIT_TAG        0.16.5
-    )
-    set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
-    set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
-    set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
-    set(ODE_DOUBLE_PRECISION          ON CACHE BOOL "" FORCE)
-   set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
-   set(ODE_NO_BUILTIN_THREADING_IMPL ON CACHE BOOL "" FORCE)
-    FetchContent_MakeAvailable(ode)
-
-    if(NOT TARGET ODE::ODE AND TARGET ODE)
-      add_library(ODE::ODE ALIAS ODE)
-    endif()
-  endif()
+set(ODE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ODE")
+if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
+  set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
 endif()
-
-# Ensure we have an ODE::ODE target
+set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
+set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
+set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
+set(ODE_DOUBLE_PRECISION          OFF CACHE BOOL "" FORCE)
+set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
+add_subdirectory("${ODE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/ode-build")
+if(NOT TARGET ODE::ODE AND TARGET ODE)
+  add_library(ODE::ODE ALIAS ODE)
+endif()
 if(NOT TARGET ODE::ODE)
-  message(FATAL_ERROR "Could not find or build ODE. "
-                      "Install libode-dev, set ODE_SOURCE_DIR to a pre-extracted "
-                      "ODE 0.16+ source tree, or ensure network access for FetchContent.")
+  message(FATAL_ERROR "Could not build ODE from ${ODE_SOURCE_DIR}.")
 endif()
 
 # ─── PHP 5.3 Embedded ────────────────────────────────────
@@ -151,103 +117,38 @@ if(NOT PHP_RE2C)
   message(STATUS "re2c not found — PHP parser regeneration disabled, using pre-generated files")
 endif()
 
-set(PHP_EXTRACTED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27" CACHE PATH
-  "Path to pre-extracted PHP 5.3 source tree. Set to empty to use tarball.")
+set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
+set(PHP_LIBRARY     "${PHP_SOURCE_DIR}/libs/libphp5.a")
+set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
 
-if(PHP_EXTRACTED_DIR)
-  # Use pre-extracted source directory directly
-  set(PHP_SOURCE_DIR "${PHP_EXTRACTED_DIR}")
-  set(PHP_LIBRARY     "${PHP_EXTRACTED_DIR}/libs/libphp5.a")
-  set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
+add_custom_target(libphp5
+  COMMAND cd "${PHP_SOURCE_DIR}" &&
+          CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no ./configure --enable-embed=static --with-pic
+                      --without-pear --disable-cgi --disable-cli
+                      --disable-simplexml --disable-xmlreader
+                      --disable-xmlwriter --disable-dom --with-zlib
+                      --enable-ftp --with-curl --enable-zip
+                      --enable-soap --disable-phar
+                      --without-gd --without-jpeg-dir
+                      --without-png-dir
+                      --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
+  COMMAND make -C "${PHP_SOURCE_DIR}" "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
+  BYPRODUCTS "${PHP_LIBRARY}"
+  WORKING_DIRECTORY "${PHP_SOURCE_DIR}"
+  COMMENT "Configuring & building PHP 5.3"
+)
 
-  add_custom_target(libphp5
-    COMMAND cd "${PHP_SOURCE_DIR}" &&
-            CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
-                        --without-pear --disable-cgi --disable-cli
-                        --disable-simplexml --disable-xmlreader
-                        --disable-xmlwriter --disable-dom --with-zlib
-                        --enable-ftp --with-curl --enable-zip
-                        --enable-soap --disable-phar
-                        --without-gd --without-jpeg-dir
-                        --without-png-dir
-                        --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    COMMAND make -C "${PHP_SOURCE_DIR}" "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
-    BYPRODUCTS "${PHP_LIBRARY}"
-    WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
-    COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
-  )
+add_library(php5 STATIC IMPORTED GLOBAL)
+set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
+add_dependencies(php5 libphp5)
 
-  add_library(php5 STATIC IMPORTED GLOBAL)
-  set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
-  add_dependencies(php5 libphp5)
-
-  set(PHP_INCLUDE_DIRS
-    ${PHP_SOURCE_DIR}
-    ${PHP_SOURCE_DIR}/main
-    ${PHP_SOURCE_DIR}/Zend
-    ${PHP_SOURCE_DIR}/TSRM
-    ${PHP_SOURCE_DIR}/include
-  )
-else()
-  # Tarball-based extraction
-  set(PHP_TARBALL "${CMAKE_CURRENT_SOURCE_DIR}/raydium/php-latest.tar.gz")
-  if(NOT EXISTS ${PHP_TARBALL})
-    message(FATAL_ERROR "PHP tarball not found at ${PHP_TARBALL}. "
-                        "Place php-5.3.27.tar.gz at that path, "
-                        "or set PHP_EXTRACTED_DIR to a pre-extracted PHP 5.3 source tree.")
-  endif()
-
-  include(ExternalProject)
-  set(PHP_BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR}/php-build)
-  set(PHP_SOURCE_DIR  ${PHP_BINARY_DIR}/src/libphp5)
-  set(PHP_LIBRARY     ${PHP_BINARY_DIR}/libs/libphp5.a)
-  set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
-
-  ExternalProject_Add(libphp5
-    URL                   file://${PHP_TARBALL}
-    URL_STRIP_COMPONENTS  1
-    SOURCE_DIR            ${PHP_SOURCE_DIR}
-    CONFIGURE_COMMAND     cd ${PHP_SOURCE_DIR} && ./configure
-                          --enable-embed=static
-                          --with-pic
-                          --without-pear
-                          --disable-cgi
-                          --disable-cli
-                          --disable-simplexml
-                          --disable-xmlreader
-                          --disable-xmlwriter
-                          --disable-dom
-                          --with-zlib
-                          --enable-ftp
-                          --with-curl
-                          --enable-zip
-                          --enable-soap
-                          --disable-phar
-                          --without-gd
-                          --without-jpeg-dir
-                          --without-png-dir
-                          --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
-    BUILD_IN_SOURCE      TRUE
-    INSTALL_COMMAND      ""
-    LOG_CONFIGURE        1
-    LOG_BUILD            1
-    BUILD_BYPRODUCTS     ${PHP_LIBRARY}
-  )
-  ExternalProject_Get_property(libphp5 SOURCE_DIR)
-
-  add_library(php5 STATIC IMPORTED GLOBAL)
-  set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
-  add_dependencies(php5 libphp5)
-
-  set(PHP_INCLUDE_DIRS
-    ${PHP_SOURCE_DIR}
-    ${PHP_SOURCE_DIR}/main
-    ${PHP_SOURCE_DIR}/Zend
-    ${PHP_SOURCE_DIR}/TSRM
-    ${PHP_SOURCE_DIR}/include
-  )
-endif()
+set(PHP_INCLUDE_DIRS
+  ${PHP_SOURCE_DIR}
+  ${PHP_SOURCE_DIR}/main
+  ${PHP_SOURCE_DIR}/Zend
+  ${PHP_SOURCE_DIR}/TSRM
+  ${PHP_SOURCE_DIR}/include
+)
 
 # ─── Raydium Engine Library ──────────────────────────────
 set(RAYDIUM_SOURCES
