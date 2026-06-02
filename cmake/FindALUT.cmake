@@ -5,7 +5,7 @@ find_path(ALUT_INCLUDE_DIR
 )
 
 find_library(ALUT_LIBRARY
-  NAMES alut
+  NAMES alut freealut
 )
 
 include(FindPackageHandleStandardArgs)

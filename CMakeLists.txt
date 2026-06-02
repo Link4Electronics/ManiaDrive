@@ -57,7 +57,7 @@ find_package(X11     REQUIRED)
 
 find_package(PkgConfig QUIET)
 if(PkgConfig_FOUND)
-  pkg_check_modules(ALUT    alut     IMPORTED_TARGET)
+  pkg_check_modules(ALUT    freealut IMPORTED_TARGET)
   pkg_check_modules(VORBIS  vorbis   IMPORTED_TARGET)
   pkg_check_modules(VORBF   vorbisfile IMPORTED_TARGET)
   pkg_check_modules(OGG     ogg      IMPORTED_TARGET)
@@ -136,7 +136,6 @@ if(PHP_SUPPORT)
     URL                   file://${PHP_TARBALL}
     URL_MD5               36db7e28bbdcfd517b2b3c8bf958ccb2
     SOURCE_DIR            ${PHP_SOURCE_DIR}
-    BINARY_DIR            ${PHP_BINARY_DIR}
     CONFIGURE_COMMAND     cd ${PHP_SOURCE_DIR} && ./configure
                           --enable-embed=static
                           --with-pic
