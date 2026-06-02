@@ -168,7 +168,8 @@ if(PHP_EXTRACTED_DIR)
                         --disable-simplexml --disable-xmlreader
                         --disable-xmlwriter --disable-dom --with-zlib
                         --enable-ftp --with-curl --enable-zip
-                        --enable-soap --without-gd --without-jpeg-dir
+                        --enable-soap --disable-phar
+                        --without-gd --without-jpeg-dir
                         --without-png-dir
                         --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
     COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1"
@@ -224,6 +225,7 @@ else()
                           --with-curl
                           --enable-zip
                           --enable-soap
+                          --disable-phar
                           --without-gd
                           --without-jpeg-dir
                           --without-png-dir
