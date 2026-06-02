@@ -133,9 +133,9 @@ add_custom_target(libphp5
                       --disable-phar
                       --without-gd --without-jpeg-dir
                       --without-png-dir
-  COMMAND make "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
+  COMMAND cd "${PHP_BUILD_DIR}" &&
+          make "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
   BYPRODUCTS "${PHP_LIBRARY}"
-  WORKING_DIRECTORY "${PHP_BUILD_DIR}"
   COMMENT "Configuring & building PHP 5.3"
 )
 
