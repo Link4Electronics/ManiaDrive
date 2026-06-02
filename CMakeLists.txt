@@ -308,6 +308,7 @@ endif()
 target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
+
 target_link_libraries(raydium PRIVATE php5)
 
 # Ensure raydium headers are findable by consuming targets
@@ -318,7 +319,7 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5)
 
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
@@ -343,7 +344,7 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5)
 
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
