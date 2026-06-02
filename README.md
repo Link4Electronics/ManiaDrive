@@ -2,6 +2,14 @@
 
 Open-source racing game built on the Raydium 3D engine.
 
+**Fork features:**
+- **Big-endian** support (PowerPC Linux, preliminary macOS/PPC)
+- **CMake** build system
+- **Bundled PHP 5.3** — patched for PowerPC64 ELFv2 visibility quirks (missing POSIX symbols, `language_scanner_globals`, `zendparse`)
+- **Bundled ODE** — single precision forced, no system dependency
+- **Kids Mode** (`-DKIDS_MODE=ON`) — unlock all tracks, show speed/accel sliders
+
+
 ## Building
 
 ### Dependencies
@@ -17,7 +25,6 @@ Open-source racing game built on the Raydium 3D engine.
 - X11, Xinerama (not needed on macOS)
 - v4l-utils (libv4lconvert, not needed on macOS)
 - bison
-- re2c
 
 **Required:**
 - PHP 5.3 (bundled at `external/php-5.3.27`) — needed for story mode and online features (scores, track sharing).
@@ -44,6 +51,18 @@ sudo dnf install gcc gcc-c++ cmake mesa-libGL-devel mesa-libGLU-devel \
   zlib-devel libcurl-devel libxml2-devel libvorbis-devel libogg-devel \
   libX11-devel libXinerama-devel libv4l-devel bison
 ```
+
+### macOS
+
+Requires Xcode (or Command Line Tools) and [Homebrew](https://brew.sh):
+
+```sh
+brew install cmake glew freealut libjpeg libpng curl libxml2 libvorbis libogg bison
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
+
+For an `.app` bundle: `cmake -B build -DMANIADRIVE_MACOS_BUNDLE=ON`.
 
 ### Build
 
@@ -94,19 +113,6 @@ cp *.php ~/.mania_drive/data/
 # or symlink:
 # ln -s "$PWD" ~/.mania_drive/data/.
 ```
-
-### macOS
-
-Requires Xcode (or Command Line Tools) and [Homebrew](https://brew.sh):
-
-```sh
-brew install cmake glew freealut libjpeg libpng curl libxml2 libvorbis libogg bison
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-```
-
-For an `.app` bundle: `cmake -B build -DMANIADRIVE_MACOS_BUNDLE=ON`.
-
 ### Cross-compilation
 
 ODE is fetched from upstream (0.16.x) which supports arm64, ppc64le, etc. natively. PHP 5.3 may need additional configure flags for the target architecture — pass them via `CMAKE_C_FLAGS` and `PHP5_CONFIGURE_OPTS` if needed.
