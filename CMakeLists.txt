@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.16)
 project(ManiaDrive VERSION 1.3.0 LANGUAGES C CXX)
 
+# Suppress CMP0135: use the timestamp of extraction for downloaded archives
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
 list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # ─── Options ──────────────────────────────────────────────
@@ -84,47 +89,104 @@ if(X11_Xrandr_FOUND OR X11_Xrandr_LIB)
 endif()
 
 # ─── ODE (Open Dynamics Engine) ──────────────────────────
-# Try system-installed ODE first. If not found, download modern ODE.
-find_package(ODE QUIET)
-if(NOT ODE_FOUND)
-  # ODE's upstream CMakeLists.txt requires CMake 2.8.11, which triggers a
-  # policy error on CMake >= 3.21. Override the minimum to suppress it.
+set(ODE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/ODE" CACHE PATH
+  "Path to pre-extracted ODE 0.16+ source tree. Set to empty to search system or fetch.")
+
+if(ODE_SOURCE_DIR)
+  # Use the pre-extracted source directly via add_subdirectory
   if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
     set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
   endif()
-  include(FetchContent)
-  FetchContent_Declare(
-    ode
-    GIT_REPOSITORY https://bitbucket.org/odedevs/ode.git
-    GIT_TAG        0.16.5
-  )
   set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
   set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
   set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
   set(ODE_DOUBLE_PRECISION          ON CACHE BOOL "" FORCE)
   set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
-  FetchContent_MakeAvailable(ode)
-
-  # ODE's CMake target is 'ODE' (uppercase); alias to ODE::ODE for consistency
+  add_subdirectory("${ODE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/ode-build")
   if(NOT TARGET ODE::ODE AND TARGET ODE)
     add_library(ODE::ODE ALIAS ODE)
+  endif()
+else()
+  # Try system-installed ODE first. If not found, download modern ODE.
+  find_package(ODE QUIET)
+  if(NOT ODE_FOUND)
+    if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.21")
+      set(CMAKE_POLICY_VERSION_MINIMUM "3.5")
+    endif()
+    include(FetchContent)
+    FetchContent_Declare(
+      ode
+      GIT_REPOSITORY https://bitbucket.org/odedevs/ode.git
+      GIT_TAG        0.16.5
+    )
+    set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
+    set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
+    set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
+    set(ODE_DOUBLE_PRECISION          ON CACHE BOOL "" FORCE)
+    set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(ode)
+
+    if(NOT TARGET ODE::ODE AND TARGET ODE)
+      add_library(ODE::ODE ALIAS ODE)
+    endif()
   endif()
 endif()
 
 # Ensure we have an ODE::ODE target
 if(NOT TARGET ODE::ODE)
   message(FATAL_ERROR "Could not find or build ODE. "
-                      "Install libode-dev or ensure network access for FetchContent.")
+                      "Install libode-dev, set ODE_SOURCE_DIR to a pre-extracted "
+                      "ODE 0.16+ source tree, or ensure network access for FetchContent.")
 endif()
 
-# ─── PHP 5.3 Embedded (bundled tarball) ──────────────────
+# ─── PHP 5.3 Embedded ────────────────────────────────────
 if(PHP_SUPPORT)
-  set(PHP_TARBALL "${CMAKE_CURRENT_SOURCE_DIR}/raydium/php-latest.tar.gz")
-  if(NOT EXISTS ${PHP_TARBALL})
-    message(FATAL_ERROR "PHP tarball not found at ${PHP_TARBALL}. "
-                        "Set PHP_SUPPORT=OFF to build without PHP support, "
-                        "or place php-5.3.27.tar.gz at that path.")
-  endif()
+  set(PHP_EXTRACTED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27" CACHE PATH
+    "Path to pre-extracted PHP 5.3 source tree. Set to empty to use tarball.")
+
+  if(PHP_EXTRACTED_DIR)
+    # Use pre-extracted source directory directly
+    set(PHP_SOURCE_DIR "${PHP_EXTRACTED_DIR}")
+    set(PHP_LIBRARY     "${PHP_EXTRACTED_DIR}/libs/libphp5.a")
+    set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
+
+    add_custom_target(libphp5
+      COMMAND cd "${PHP_SOURCE_DIR}" &&
+              ./configure --enable-embed=static --with-pic
+                          --without-pear --disable-cgi --disable-cli
+                          --disable-phpdbg --disable-fpm
+                          --disable-simplexml --disable-xmlreader
+                          --disable-xmlwriter --disable-dom --with-zlib
+                          --enable-ftp --with-curl --enable-zip
+                          --enable-soap --without-gd --without-jpeg-dir
+                          --without-png-dir
+                          --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
+      COMMAND make -C "${PHP_SOURCE_DIR}"
+      BYPRODUCTS "${PHP_LIBRARY}"
+      WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
+      COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
+    )
+
+    add_library(php5 STATIC IMPORTED GLOBAL)
+    set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
+    add_dependencies(php5 libphp5)
+
+    set(PHP_INCLUDE_DIRS
+      ${PHP_SOURCE_DIR}
+      ${PHP_SOURCE_DIR}/main
+      ${PHP_SOURCE_DIR}/Zend
+      ${PHP_SOURCE_DIR}/TSRM
+      ${PHP_SOURCE_DIR}/include
+    )
+  else()
+    # Tarball-based extraction
+    set(PHP_TARBALL "${CMAKE_CURRENT_SOURCE_DIR}/raydium/php-latest.tar.gz")
+    if(NOT EXISTS ${PHP_TARBALL})
+      message(FATAL_ERROR "PHP tarball not found at ${PHP_TARBALL}. "
+                          "Set PHP_SUPPORT=OFF to build without PHP support, "
+                          "or place php-5.3.27.tar.gz at that path, "
+                          "or set PHP_EXTRACTED_DIR to a pre-extracted PHP 5.3 source tree.")
+    endif()
 
   include(ExternalProject)
   set(PHP_BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR}/php-build)
@@ -134,6 +196,7 @@ if(PHP_SUPPORT)
 
   ExternalProject_Add(libphp5
     URL                   file://${PHP_TARBALL}
+    URL_STRIP_COMPONENTS  1
     SOURCE_DIR            ${PHP_SOURCE_DIR}
     CONFIGURE_COMMAND     cd ${PHP_SOURCE_DIR} && ./configure
                           --enable-embed=static
@@ -176,6 +239,7 @@ if(PHP_SUPPORT)
     ${PHP_SOURCE_DIR}/TSRM
     ${PHP_SOURCE_DIR}/include
   )
+  endif()
 endif()
 
 # ─── Raydium Engine Library ──────────────────────────────
