@@ -317,15 +317,9 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-# Wrapper interface library bundles php5 with --whole-archive so
-# all Zend objects are force-linked into libraydium.so.
-add_library(php5_whole INTERFACE)
-target_link_libraries(php5_whole INTERFACE
-  -Wl,--whole-archive "${PHP_LIBRARY}" -Wl,--no-whole-archive
-  -Wl,--allow-multiple-definition
-)
-target_link_libraries(raydium PRIVATE php5_whole)
-add_dependencies(php5_whole php5)
+# php5 linked directly into libraydium.so (symbols resolved by linker
+# extracting needed objects from the static archive).
+target_link_libraries(raydium PRIVATE php5)
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
