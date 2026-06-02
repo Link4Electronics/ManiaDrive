@@ -60,6 +60,16 @@ EXTRA_CFLAGS="\
 - If `xmlStrncmp` / libxml2 error appears: `libphp5.a`'s `libxml.o` needs `-lxml2`. Not an issue with shared build.
 - If `gzdopen` / zlib error appears: `zlib_fopen_wrapper.o` needs `-lz`. Not an issue with shared build.
 - `config.h`'s `#ifndef NO_PHP_SUPPORT` block (in raydium headers) is dead code — PHP is always required, the option was removed.
+- If `zend_isnan`/`zend_isinf`/`zend_finite`/`zend_sprintf` unresolved symbols appear: these functions are only defined on Windows/NetWare or conditionally guarded. On POSIX they must be provided externally. See `external/php-5.3.27/sapi/embed/php_embed.c` for the fix (added to the embedded SAPI source file since it's always compiled).
+
+### Missing POSIX symbols in PHP 5.3.27
+PHP 5.3.27 has several symbols that are only defined on Windows/NetWare (`zend_config.w32.h`, `zend_config.nw.h`) or guarded by configure-detected defines:
+- `zend_isnan` — only `#define`d on Windows (`_isnan`) and NetWare. On POSIX, `isnan()` is a C99 macro, not a function. The symbol is referenced from `spprintf.c`, `snprintf.c`, `math.c`, `formatted_print.c`, `json.c`, etc.
+- `zend_isinf` — same pattern, references from the same files.
+- `zend_finite` — same pattern, also used in `zend_operators.c`, `logical_filters.c`.
+- `zend_sprintf` — guarded by `#if ZEND_BROKEN_SPRINTF` in `zend_sprintf.c`. Configure always sets `ZEND_BROKEN_SPRINTF=0` on modern glibc, so the function body is excluded. Referenced from `zend_exceptions.c`, `zend_compile.c`, `mysqlnd_debug.c`.
+
+**Fix**: `sapi/embed/php_embed.c` provides implementations for all four using standard C library functions (`isnan`, `isinf`, `finite`, `vsprintf`). This file is guaranteed compiled in the embedded SAPI build. Since `php_embed.c` is part of the PHP source tree, this could be ported to a patch file in future.
 
 ## Building
 

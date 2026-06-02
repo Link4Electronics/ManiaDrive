@@ -232,6 +232,31 @@ EMBED_SAPI_API void php_embed_shutdown(TSRMLS_D)
 }
 
 /*
+ * Provide zend_isnan/zend_isinf/zend_finite on POSIX where
+ * isnan/isinf are macros and finite is a libm function.
+ */
+#include <math.h>
+int zend_isnan(double d) { return isnan(d); }
+int zend_isinf(double d) { return isinf(d); }
+int zend_finite(double d) { return finite(d); }
+
+/*
+ * zend_sprintf is only compiled when ZEND_BROKEN_SPRINTF is defined.
+ * Provide a non-broken version for POSIX.
+ */
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+int zend_sprintf(char *buffer, const char *format, ...)
+{
+	va_list args;
+	va_start(args, format);
+	vsprintf(buffer, format, args);
+	va_end(args);
+	return strlen(buffer);
+}
+
+/*
  * Local variables:
  * tab-width: 4
  * c-basic-offset: 4

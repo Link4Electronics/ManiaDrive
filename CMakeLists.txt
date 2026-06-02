@@ -135,7 +135,14 @@ set(PHP_CONFIGURE_STAMP "${PHP_BUILD_DIR}/config.status")
 add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${PHP_BUILD_DIR}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
-          CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no "${PHP_SOURCE_DIR}/configure"
+          CFLAGS="-std=gnu89"
+          ac_cv_prog_RE2C=no
+          ac_cv_sizeof_long=8 ac_cv_sizeof_int=4
+          ac_cv_header_stdint_h=yes ac_cv_header_dirent_dirent_h=yes
+          ac_cv_header_stdlib_h=yes ac_cv_header_string_h=yes
+          ac_cv_header_strings_h=yes ac_cv_header_sys_types_h=yes
+          ac_cv_int_type_int32_t=yes ac_cv_int_type_uint32_t=yes
+          "${PHP_SOURCE_DIR}/configure"
                       "--enable-embed=${PHP_EMBED}" --with-pic
                       --without-pear --disable-cgi --disable-cli
                       --disable-simplexml --disable-xmlreader
@@ -145,6 +152,12 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
                       --without-gd --without-jpeg-dir
                       --without-png-dir
   COMMENT "Configuring PHP 5.3"
+  # php_config.h.in is gitignored and not present in a fresh checkout.
+  # Regenerate it from config.status's embedded define list, then
+  # re-run config.status to produce a complete php_config.h.
+  COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake/gen_php_config_h_in.sh"
+          "${PHP_BUILD_DIR}"
+          "${PHP_SOURCE_DIR}"
 )
 
 add_custom_command(OUTPUT "${PHP_LIBRARY}"
@@ -170,6 +183,7 @@ set(PHP_INCLUDE_DIRS
   ${PHP_BUILD_DIR}
   ${PHP_BUILD_DIR}/main
   ${PHP_BUILD_DIR}/Zend
+  ${PHP_BUILD_DIR}/TSRM
 )
 
 # ─── Raydium Engine Library ──────────────────────────────
