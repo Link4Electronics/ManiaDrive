@@ -321,7 +321,7 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
 
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
@@ -346,7 +346,7 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
 
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 

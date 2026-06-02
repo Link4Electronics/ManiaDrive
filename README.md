@@ -85,6 +85,15 @@ sudo cmake --install .
 
 The game expects data files (`rayphp/`, textures, sounds, etc.) relative to the working directory. Run from the project root or install first.
 
+PHP scripts at the root of the repo (`anim.php`, `mania_localtracks.php`, etc.) must be copied or symlinked into the game's data directory:
+
+```sh
+mkdir -p ~/.mania_drive/data
+cp *.php ~/.mania_drive/data/
+# or symlink:
+# ln -s "$PWD" ~/.mania_drive/data/.
+```
+
 ### Cross-compilation
 
 ODE is fetched from upstream (0.16.x) which supports arm64, ppc64le, etc. natively. PHP 5.3 may need additional configure flags for the target architecture — pass them via `CMAKE_C_FLAGS` and `PHP5_CONFIGURE_OPTS` if needed.
