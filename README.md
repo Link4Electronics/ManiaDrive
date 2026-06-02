@@ -18,7 +18,7 @@ Open-source racing game built on the Raydium 3D engine.
 - v4l-utils (libv4lconvert)
 
 **Optional:**
-- PHP 5.3 (bundled tarball at `raydium/php-latest.tar.gz`) — needed for online features (scores, track sharing). Disable with `-DPHP_SUPPORT=OFF`.
+- PHP 5.3 (bundled at `external/php-5.3.27`) — needed for online features (scores, track sharing). Disable with `-DPHP_SUPPORT=OFF`.
 
 Debian/Ubuntu:
 ```sh

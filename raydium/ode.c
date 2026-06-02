@@ -2384,7 +2384,7 @@ if(!raydium_ode_object_isvalid(obj))
     }
 }
 
-void raydium_ode_object_move_3f(int obj, float x, float y, float z)
+void raydium_ode_object_move_3f(int obj, dReal x, dReal y, dReal z)
 {
     dReal pos[3];
     pos[0]=x;

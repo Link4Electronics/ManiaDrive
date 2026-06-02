@@ -100,9 +100,9 @@ if(ODE_SOURCE_DIR)
   set(ODE_WITH_DEMOS               OFF CACHE BOOL "" FORCE)
   set(ODE_WITH_TESTS               OFF CACHE BOOL "" FORCE)
   set(ODE_WITH_TOOLS               OFF CACHE BOOL "" FORCE)
-  set(ODE_DOUBLE_PRECISION          ON CACHE BOOL "" FORCE)
-  set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
-  add_subdirectory("${ODE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/ode-build")
+   set(ODE_DOUBLE_PRECISION          OFF CACHE BOOL "" FORCE)
+   set(ODE_NO_BUILD_EXAMPLES         ON CACHE BOOL "" FORCE)
+   add_subdirectory("${ODE_SOURCE_DIR}" "${CMAKE_CURRENT_BINARY_DIR}/ode-build")
   if(NOT TARGET ODE::ODE AND TARGET ODE)
     add_library(ODE::ODE ALIAS ODE)
   endif()
@@ -152,7 +152,7 @@ if(PHP_SUPPORT)
 
     add_custom_target(libphp5
       COMMAND cd "${PHP_SOURCE_DIR}" &&
-              ./configure --enable-embed=static --with-pic
+              CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
                           --without-pear --disable-cgi --disable-cli
                           --disable-phpdbg --disable-fpm
                           --disable-simplexml --disable-xmlreader
@@ -310,8 +310,7 @@ add_library(raydium SHARED ${RAYDIUM_SOURCES})
 target_include_directories(raydium
   PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/raydium
-    ${CMAKE_CURRENT_SOURCE_DIR}/raydium/headers
-  PUBLIC
+  INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/raydium>
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/raydium/headers>
 )
@@ -395,7 +394,7 @@ if(X11_Xinerama_LIB)
   target_link_libraries(raydium PRIVATE ${X11_Xinerama_LIB})
 endif()
 
-target_link_libraries(raydium PRIVATE ODE::ODE)
+target_link_libraries(raydium PUBLIC ODE::ODE)
 
 if(PHP_SUPPORT)
   target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
@@ -410,7 +409,11 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m)
+
+if(PHP_SUPPORT)
+  target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
+endif()
 
 target_compile_definitions(mania_drive
   PRIVATE
@@ -433,7 +436,11 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m)
+
+if(PHP_SUPPORT)
+  target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
+endif()
 
 target_compile_definitions(level_editor
   PRIVATE

@@ -28,6 +28,9 @@
 #include "php.h"
 
 #define PHP_XML_INTERNAL
+#ifndef ATTRIBUTE_UNUSED
+#define ATTRIBUTE_UNUSED __attribute__((unused))
+#endif
 #include "zend_variables.h"
 #include "ext/standard/php_string.h"
 #include "ext/standard/info.h"
