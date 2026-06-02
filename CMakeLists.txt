@@ -119,7 +119,7 @@ endif()
 
 set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
 set(PHP_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}/php-build")
-set(PHP_LIBRARY    "${PHP_BUILD_DIR}/libs/libphp5.a")
+set(PHP_LIBRARY    "${PHP_BUILD_DIR}/libs/libphp5.so")
 
 set(PHP_CONFIGURE_STAMP "${PHP_BUILD_DIR}/config.status")
 
@@ -127,7 +127,7 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${PHP_BUILD_DIR}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no "${PHP_SOURCE_DIR}/configure"
-                      --enable-embed=static --with-pic
+                      --enable-embed=shared --with-pic
                       --without-pear --disable-cgi --disable-cli
                       --disable-simplexml --disable-xmlreader
                       --disable-xmlwriter --disable-dom
@@ -147,7 +147,7 @@ add_custom_command(OUTPUT "${PHP_LIBRARY}"
 
 add_custom_target(libphp5 DEPENDS "${PHP_LIBRARY}")
 
-add_library(php5 STATIC IMPORTED GLOBAL)
+add_library(php5 SHARED IMPORTED GLOBAL)
 set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
 add_dependencies(php5 libphp5)
 
@@ -317,8 +317,9 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-# php5 symbols resolved at executable link time
-target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
+# php5 is a shared library; linked into raydium so all Zend symbols
+# are resolved internally in the DSO.
+target_link_libraries(raydium PRIVATE php5)
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -328,7 +329,7 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(mania_drive
@@ -348,11 +349,12 @@ endif()
 set_target_properties(mania_drive PROPERTIES
   OUTPUT_NAME mania_drive
   RUNTIME_OUTPUT_NAME mania_drive
+  BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"
 )
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(level_editor
@@ -364,6 +366,7 @@ target_compile_definitions(level_editor
 set_target_properties(level_editor PROPERTIES
   OUTPUT_NAME level_editor
   RUNTIME_OUTPUT_NAME level_editor
+  BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"
 )
 
 # ─── Install ──────────────────────────────────────────────
