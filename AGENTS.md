@@ -43,7 +43,7 @@ EXTRA_CFLAGS="\
 
 ### Linking
 - `target_link_libraries(raydium PRIVATE php5)` — libraydium.so has DT_NEEDED on libphp5.so
-- Executables link `raydium` but NOT `php5` directly (RPATH handles transitive resolution)
+- Executables also link `php5` directly (`target_link_libraries(exec PRIVATE raydium ... php5 ...)`) because the game source code calls `php_sprintf` directly and the local linker (`--no-copy-dt-needed-entries`) doesn't follow transitive DT_NEEDED from raydium when building executables
 - RPATH set to `"${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"` on both executables
 
 ### RPATH note
