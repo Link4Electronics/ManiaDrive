@@ -38,7 +38,8 @@ EXTRA_CFLAGS="\
 - `-DZEND_DLIMPORT=` — prevents angle-bracket `#include <../main/php_config.h>` from failing on powerpc64; ZEND_DLIMPORT needs an explicit empty definition
 - `HAVE_BUNDLED_PCRE=1` — PHP configure says "bundled" but never writes the define to `php_config.h` on powerpc64; must be forced via EXTRA_CFLAGS + `target_compile_definitions`
 - `PHP_EXT_DES_CRYPT=0`, `PHP_MD5_CRYPT=0`, `PHP_BLOWFISH_CRYPT=0` — configure doesn't define these on powerpc64; crypt functions are unused by the game so just disable
-- `ac_cv_prog_RE2C=no` — cached autoconf var prevents configure from running re2c (system re2c too new, would clobber pre-generated scanner .c files). Using `RE2C=/bin/true` would silently produce empty scanner output.
+- `ac_cv_prog_RE2C=no` — cached autoconf var prevents configure from detecting re2c
+- Pre-generated scanner `.c` files touched before `make` (via `cmake -E touch` in `CMakeLists.txt`) so Make's built-in `.l.c` pattern rule never fires. System `re2c` is too new for PHP 5.3's flex-style `.l` files and produces "unknown error processing section 1" / "bad character" failures on ppc64.
 
 ### Why shared library (not static) — both architectures
 - `--enable-embed=shared` produces `libphp5.so` which resolves all internal Zend symbols within itself

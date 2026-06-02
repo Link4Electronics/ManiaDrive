@@ -169,6 +169,13 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
 )
 
 add_custom_command(OUTPUT "${PHP_LIBRARY}"
+  # Touch pre-generated scanner .c files so they are newer than their .l
+  # sources, preventing the built-in .l.c pattern rule from invoking
+  # re2c.  The system re2c is too new for PHP 5.3's .l syntax and would
+  # either fail or produce broken scanner output.
+  COMMAND "${CMAKE_COMMAND}" -E touch
+          "${PHP_SOURCE_DIR}/Zend/zend_language_scanner.c"
+          "${PHP_SOURCE_DIR}/Zend/zend_ini_scanner.c"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           make "EXTRA_CFLAGS=-fvisibility=default -DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
               "LDFLAGS=-Wl,--allow-shlib-undefined -Wl,--allow-multiple-definition"
