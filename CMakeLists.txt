@@ -318,11 +318,11 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
 # Embed all php5 objects into libraydium.so via --whole-archive so
-# hidden (or circular) Zend symbols are resolved inside the DSO.
-# --start-group enables repeated searching for circular deps within php5.
-target_link_libraries(raydium PRIVATE
-  -Wl,--whole-archive "${PHP_LIBRARY}" -Wl,--no-whole-archive
-  -Wl,--allow-multiple-definition
+# Zend symbols are resolved inside the DSO. SHELL: keeps flags + path
+# as a single command-line fragment, preventing CMake from reordering.
+target_link_options(raydium PRIVATE
+  "SHELL:-Wl,--whole-archive ${PHP_LIBRARY} -Wl,--no-whole-archive"
+  "LINKER:--allow-multiple-definition"
 )
 add_dependencies(raydium php5)
 
