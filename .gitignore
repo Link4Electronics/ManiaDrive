@@ -1,4 +1,5 @@
 build/
+!external/php-5.3.27/build/
 *.bin
 *.o
 *.so
