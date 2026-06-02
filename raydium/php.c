@@ -168,16 +168,18 @@ int raydium_php_exec(char *name)
     file_handle.opened_path = NULL;
 */
 
-    file_handle.handle.fp=VCWD_FOPEN(name,"rb");
+    char resolved_name[RAYDIUM_MAX_DIR_LEN];
+    raydium_path_resolv(name, resolved_name, 'r');
+    file_handle.handle.fp=VCWD_FOPEN(resolved_name,"rb");
     if(!file_handle.handle.fp)
         {
         raydium_log("php: ERROR: cannot post-open '%s' file",name);
         return 0;
         }
-    file_handle.filename = name;
+    file_handle.filename = resolved_name;
     file_handle.type = ZEND_HANDLE_FP;
     file_handle.free_filename = 0;
-    file_handle.opened_path = estrdup(name);
+    file_handle.opened_path = estrdup(resolved_name);
 
 
 //    if(php_request_startup(CLS_C ELS_CC PLS_CC SLS_CC) == FAILURE) {
