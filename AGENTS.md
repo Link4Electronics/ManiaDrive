@@ -91,6 +91,19 @@ These symbols are also defined in `zend_language_scanner.c`. On ppc64 ELFv2 with
 1. `CMakeLists.txt` patches `Zend/zend_config.h` after configure to change `#define ZEND_API` to `#define ZEND_API __attribute__((visibility("default")))`. This attaches an explicit default-visibility attribute to every `ZEND_API`-marked symbol regardless of the active `-fvisibility` flag.
 2. `Zend/zend_language_scanner.c` — the definitions of `compile_filename` and `compile_string` were missing the `ZEND_API` qualifier that their declarations in `zend_compile.h` carried. Added it so the visibility attribute from fix 1 also applies to them.
 
+### `ini_scanner_globals` missing on powerpc64
+
+Same pattern as `language_scanner_globals` — defined in `Zend/zend_ini_scanner.c` but not exported from `libphp5.so` on ppc64 ELFv2.
+
+**Fix**: `sapi/embed/php_embed.c` provides a weak `__attribute__((weak))` definition of `zend_ini_scanner_globals ini_scanner_globals`, right after the existing `language_scanner_globals` fallback.
+
+## ODE (Open Dynamics Engine)
+
+### Precision
+- The game requires **single precision** (`dReal == float`, 4 bytes). It checks at startup with `sizeof(dReal) != sizeof(float)` and exits if ODE was built with double precision.
+- System ODE packages on ppc64 are often built with double precision (`dDOUBLE`).
+- **Fix**: `find_package(ODE QUIET)` was removed — the bundled ODE in `external/ODE/` is always used. Single precision is forced via `set(ODE_DOUBLE_PRECISION OFF CACHE BOOL "" FORCE)`.
+
 ## Building
 
 ```sh
