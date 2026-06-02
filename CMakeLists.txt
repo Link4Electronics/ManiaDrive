@@ -118,23 +118,24 @@ if(NOT PHP_RE2C)
 endif()
 
 set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
-set(PHP_LIBRARY     "${PHP_SOURCE_DIR}/libs/libphp5.a")
-set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
+set(PHP_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}/php-build")
+set(PHP_LIBRARY    "${PHP_BUILD_DIR}/libs/libphp5.a")
 
 add_custom_target(libphp5
-  COMMAND cd "${PHP_SOURCE_DIR}" &&
-          CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no ./configure --enable-embed=static --with-pic
+  COMMAND ${CMAKE_COMMAND} -E make_directory "${PHP_BUILD_DIR}"
+  COMMAND cd "${PHP_BUILD_DIR}" &&
+          CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no "${PHP_SOURCE_DIR}/configure"
+                      --enable-embed=static --with-pic
                       --without-pear --disable-cgi --disable-cli
                       --disable-simplexml --disable-xmlreader
-                      --disable-xmlwriter --disable-dom --with-zlib
-                      --enable-ftp --with-curl --enable-zip
-                      --enable-soap --disable-phar
+                      --disable-xmlwriter --disable-dom
+                      --with-zlib
+                      --disable-phar
                       --without-gd --without-jpeg-dir
                       --without-png-dir
-                      --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-  COMMAND make -C "${PHP_SOURCE_DIR}" "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
+  COMMAND make "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
   BYPRODUCTS "${PHP_LIBRARY}"
-  WORKING_DIRECTORY "${PHP_SOURCE_DIR}"
+  WORKING_DIRECTORY "${PHP_BUILD_DIR}"
   COMMENT "Configuring & building PHP 5.3"
 )
 
@@ -148,6 +149,8 @@ set(PHP_INCLUDE_DIRS
   ${PHP_SOURCE_DIR}/Zend
   ${PHP_SOURCE_DIR}/TSRM
   ${PHP_SOURCE_DIR}/include
+  ${PHP_BUILD_DIR}
+  ${PHP_BUILD_DIR}/main
 )
 
 # ─── Raydium Engine Library ──────────────────────────────
