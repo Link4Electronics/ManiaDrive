@@ -121,7 +121,9 @@ set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
 set(PHP_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}/php-build")
 set(PHP_LIBRARY    "${PHP_BUILD_DIR}/libs/libphp5.a")
 
-add_custom_target(libphp5
+set(PHP_CONFIGURE_STAMP "${PHP_BUILD_DIR}/config.status")
+
+add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${PHP_BUILD_DIR}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no "${PHP_SOURCE_DIR}/configure"
@@ -133,11 +135,17 @@ add_custom_target(libphp5
                       --disable-phar
                       --without-gd --without-jpeg-dir
                       --without-png-dir
+  COMMENT "Configuring PHP 5.3"
+)
+
+add_custom_command(OUTPUT "${PHP_LIBRARY}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           make "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
-  BYPRODUCTS "${PHP_LIBRARY}"
-  COMMENT "Configuring & building PHP 5.3"
+  DEPENDS "${PHP_CONFIGURE_STAMP}"
+  COMMENT "Building PHP 5.3"
 )
+
+add_custom_target(libphp5 DEPENDS "${PHP_LIBRARY}")
 
 add_library(php5 STATIC IMPORTED GLOBAL)
 set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
