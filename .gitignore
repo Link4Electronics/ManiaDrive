@@ -13,6 +13,5 @@ compile_commands.json
 # External dependencies — re-fetch with:
 #   cmake -DODE_SOURCE_DIR=   (or use the external/ODE checkout)
 #   cmake -DPHP_EXTRACTED_DIR= (or use the external/php-5.3.27 extraction)
-/external/ODE/
 /external/php-5.3.27/
 
