@@ -341,6 +341,7 @@ else()
   # ppc64: static php5 would cause circular deps in a DSO; resolve at
   # executable link time instead
   target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
+  add_dependencies(raydium php5)
 endif()
 
 # Ensure raydium headers are findable by consuming targets
