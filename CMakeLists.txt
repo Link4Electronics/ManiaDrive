@@ -327,6 +327,7 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 target_link_libraries(raydium PRIVATE php5)
+target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -340,6 +341,7 @@ macro(add_mania_executable NAME SOURCE)
   add_executable(${NAME} ${SOURCE})
   target_include_directories(${NAME} PRIVATE ${PHP_INCLUDE_DIRS})
   target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+  target_link_options(${NAME} PRIVATE "LINKER:--allow-shlib-undefined")
 
   target_compile_definitions(${NAME}
     PRIVATE
