@@ -171,7 +171,7 @@ if(PHP_EXTRACTED_DIR)
                         --without-gd --without-jpeg-dir
                         --without-png-dir
                         --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
+    COMMAND make -C "${PHP_SOURCE_DIR}" "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
     BYPRODUCTS "${PHP_LIBRARY}"
     WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
     COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
@@ -227,7 +227,7 @@ else()
                           --without-jpeg-dir
                           --without-png-dir
                           --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
+    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} "EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0"
     BUILD_IN_SOURCE      TRUE
     INSTALL_COMMAND      ""
     LOG_CONFIGURE        1
