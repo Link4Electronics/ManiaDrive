@@ -309,7 +309,9 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-target_link_libraries(raydium PRIVATE php5)
+# php5 symbols resolved at executable link time, not in the shared lib
+target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
+
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
