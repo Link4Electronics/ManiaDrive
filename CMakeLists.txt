@@ -317,9 +317,8 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-# php5 linked directly into libraydium.so (symbols resolved by linker
-# extracting needed objects from the static archive).
-target_link_libraries(raydium PRIVATE php5)
+# php5 symbols resolved at executable link time
+target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -329,7 +328,7 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(mania_drive
@@ -353,7 +352,7 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(level_editor
