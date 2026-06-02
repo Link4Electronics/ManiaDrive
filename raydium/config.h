@@ -10,8 +10,12 @@
 
 // Enable PHP support
 #ifndef NO_PHP_SUPPORT
+#ifndef PHP_SUPPORT
 #define PHP_SUPPORT
+#endif
+#ifndef PHP_INI_PATH
 #define PHP_INI_PATH "./"
+#endif
 #endif
 
 // You may define this during compilation (-DRAYPHP_PATH=\"...\")
@@ -21,26 +25,40 @@
 
 #ifndef NO_ODE_SUPPORT
 // Enable ODE physics support
+#ifndef ODE_SUPPORT
 #define ODE_SUPPORT
+#endif
+#ifndef ODE_QUICKSTEP
 #define ODE_QUICKSTEP
+#endif
+#ifndef ODE_PREDICTION
 #define ODE_PREDICTION
+#endif
 //#define ODE_NETWORK_GHOSTS
 #endif
 
 // RegApi Support (exports Raydium API to PHP)
+#ifndef REG_API
 #define REG_API
+#endif
 
 // enable profiling
+#ifndef DEBUG_PROFILE
 #define DEBUG_PROFILE
+#endif
 
 // (link to OpenAL is always required !)
 //#define NO_SOUND_DEBUG
 
 // Allow Xinerama Support for X11
+#ifndef HAVE_XINERAMA
 #define HAVE_XINERAMA
+#endif
 
 // Allow DPMS Support for X11
+#ifndef HAVE_DPMS
 #define HAVE_DPMS
+#endif
 
 // will highlight triangle with tag != 0 at render time :
 //#define RENDER_DEBUG_TAG

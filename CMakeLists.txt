@@ -10,7 +10,6 @@ list(PREPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 # ─── Options ──────────────────────────────────────────────
 option(KIDS_MODE  "Enable kids mode (unlock all tracks, speed/accel sliders)" OFF)
-option(PHP_SUPPORT "Enable PHP scripting engine (requires PHP 5.3 source)"    ON)
 
 # ─── C Standard ───────────────────────────────────────────
 # The codebase uses GNU89 extensions and needs -fcommon for GCC 10+
@@ -141,64 +140,62 @@ if(NOT TARGET ODE::ODE)
 endif()
 
 # ─── PHP 5.3 Embedded ────────────────────────────────────
-if(PHP_SUPPORT)
-  find_program(PHP_BISON bison)
-  if(NOT PHP_BISON)
-    message(STATUS "bison not found — will use pre-generated PHP parser files")
-  else()
-    message(STATUS "bison found: ${PHP_BISON}")
+find_program(PHP_BISON bison)
+if(NOT PHP_BISON)
+  message(STATUS "bison not found — will use pre-generated PHP parser files")
+else()
+  message(STATUS "bison found: ${PHP_BISON}")
+endif()
+find_program(PHP_RE2C re2c)
+if(NOT PHP_RE2C)
+  message(STATUS "re2c not found — PHP parser regeneration disabled, using pre-generated files")
+endif()
+
+set(PHP_EXTRACTED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27" CACHE PATH
+  "Path to pre-extracted PHP 5.3 source tree. Set to empty to use tarball.")
+
+if(PHP_EXTRACTED_DIR)
+  # Use pre-extracted source directory directly
+  set(PHP_SOURCE_DIR "${PHP_EXTRACTED_DIR}")
+  set(PHP_LIBRARY     "${PHP_EXTRACTED_DIR}/libs/libphp5.a")
+  set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
+
+  add_custom_target(libphp5
+    COMMAND cd "${PHP_SOURCE_DIR}" &&
+            CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
+                        --without-pear --disable-cgi --disable-cli
+                        --disable-phpdbg --disable-fpm
+                        --disable-simplexml --disable-xmlreader
+                        --disable-xmlwriter --disable-dom --with-zlib
+                        --enable-ftp --with-curl --enable-zip
+                        --enable-soap --without-gd --without-jpeg-dir
+                        --without-png-dir
+                        --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
+    COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1"
+    BYPRODUCTS "${PHP_LIBRARY}"
+    WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
+    COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
+  )
+
+  add_library(php5 STATIC IMPORTED GLOBAL)
+  set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
+  add_dependencies(php5 libphp5)
+
+  set(PHP_INCLUDE_DIRS
+    ${PHP_SOURCE_DIR}
+    ${PHP_SOURCE_DIR}/main
+    ${PHP_SOURCE_DIR}/Zend
+    ${PHP_SOURCE_DIR}/TSRM
+    ${PHP_SOURCE_DIR}/include
+  )
+else()
+  # Tarball-based extraction
+  set(PHP_TARBALL "${CMAKE_CURRENT_SOURCE_DIR}/raydium/php-latest.tar.gz")
+  if(NOT EXISTS ${PHP_TARBALL})
+    message(FATAL_ERROR "PHP tarball not found at ${PHP_TARBALL}. "
+                        "Place php-5.3.27.tar.gz at that path, "
+                        "or set PHP_EXTRACTED_DIR to a pre-extracted PHP 5.3 source tree.")
   endif()
-  find_program(PHP_RE2C re2c)
-  if(NOT PHP_RE2C)
-    message(STATUS "re2c not found — PHP parser regeneration disabled, using pre-generated files")
-  endif()
-
-  set(PHP_EXTRACTED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27" CACHE PATH
-    "Path to pre-extracted PHP 5.3 source tree. Set to empty to use tarball.")
-
-  if(PHP_EXTRACTED_DIR)
-    # Use pre-extracted source directory directly
-    set(PHP_SOURCE_DIR "${PHP_EXTRACTED_DIR}")
-    set(PHP_LIBRARY     "${PHP_EXTRACTED_DIR}/libs/libphp5.a")
-    set(PHP_INCLUDE_DIR ${PHP_SOURCE_DIR})
-
-    add_custom_target(libphp5
-      COMMAND cd "${PHP_SOURCE_DIR}" &&
-              CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
-                          --without-pear --disable-cgi --disable-cli
-                          --disable-phpdbg --disable-fpm
-                          --disable-simplexml --disable-xmlreader
-                          --disable-xmlwriter --disable-dom --with-zlib
-                          --enable-ftp --with-curl --enable-zip
-                          --enable-soap --without-gd --without-jpeg-dir
-                          --without-png-dir
-                          --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-      COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1"
-      BYPRODUCTS "${PHP_LIBRARY}"
-      WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
-      COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
-    )
-
-    add_library(php5 STATIC IMPORTED GLOBAL)
-    set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
-    add_dependencies(php5 libphp5)
-
-    set(PHP_INCLUDE_DIRS
-      ${PHP_SOURCE_DIR}
-      ${PHP_SOURCE_DIR}/main
-      ${PHP_SOURCE_DIR}/Zend
-      ${PHP_SOURCE_DIR}/TSRM
-      ${PHP_SOURCE_DIR}/include
-    )
-  else()
-    # Tarball-based extraction
-    set(PHP_TARBALL "${CMAKE_CURRENT_SOURCE_DIR}/raydium/php-latest.tar.gz")
-    if(NOT EXISTS ${PHP_TARBALL})
-      message(FATAL_ERROR "PHP tarball not found at ${PHP_TARBALL}. "
-                          "Set PHP_SUPPORT=OFF to build without PHP support, "
-                          "or place php-5.3.27.tar.gz at that path, "
-                          "or set PHP_EXTRACTED_DIR to a pre-extracted PHP 5.3 source tree.")
-    endif()
 
   include(ExternalProject)
   set(PHP_BINARY_DIR  ${CMAKE_CURRENT_BINARY_DIR}/php-build)
@@ -251,7 +248,6 @@ if(PHP_SUPPORT)
     ${PHP_SOURCE_DIR}/TSRM
     ${PHP_SOURCE_DIR}/include
   )
-  endif()
 endif()
 
 # ─── Raydium Engine Library ──────────────────────────────
@@ -310,12 +306,10 @@ set(RAYDIUM_SOURCES
   raydium/window.c
 )
 
-if(PHP_SUPPORT)
-  list(APPEND RAYDIUM_SOURCES
-    raydium/php.c
-    raydium/rayphp.c
-  )
-endif()
+list(APPEND RAYDIUM_SOURCES
+  raydium/php.c
+  raydium/rayphp.c
+)
 
 add_library(raydium SHARED ${RAYDIUM_SOURCES})
 
@@ -331,7 +325,8 @@ target_compile_definitions(raydium
   PRIVATE
     LIBRAY
     FORCE_LIBRAYDIUM
-    $<$<BOOL:${PHP_SUPPORT}>:PHP_SUPPORT>
+    PHP_SUPPORT
+    HAVE_BUNDLED_PCRE=1
     PHP_INI_PATH="./"
     ODE_SUPPORT
     ODE_QUICKSTEP
@@ -408,10 +403,8 @@ endif()
 
 target_link_libraries(raydium PUBLIC ODE::ODE)
 
-if(PHP_SUPPORT)
-  target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
-  target_link_libraries(raydium PRIVATE php5)
-endif()
+target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
+target_link_libraries(raydium PRIVATE php5)
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -423,14 +416,12 @@ target_include_directories(raydium
 add_executable(mania_drive mania_drive.c)
 target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m)
 
-if(PHP_SUPPORT)
-  target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
-endif()
+target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(mania_drive
   PRIVATE
     FORCE_LIBRAYDIUM
-    $<$<BOOL:${PHP_SUPPORT}>:PHP_SUPPORT>
+    PHP_SUPPORT
     ODE_SUPPORT
 )
 
@@ -450,13 +441,12 @@ set_target_properties(mania_drive PROPERTIES
 add_executable(level_editor mania2.c)
 target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m)
 
-if(PHP_SUPPORT)
-  target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
-endif()
+target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
 target_compile_definitions(level_editor
   PRIVATE
     FORCE_LIBRAYDIUM
+    PHP_SUPPORT
 )
 
 set_target_properties(level_editor PROPERTIES

@@ -10,10 +10,3 @@
 #ifndef uint
 typedef unsigned int uint;
 #endif
-
-/* Fallback: configure on some platforms (e.g. powerpc64 big-endian)
- * fails to reach the AC_DEFINE for HAVE_BUNDLED_PCRE even though
- * bundled PCRE is selected. Ensure it's always defined. */
-#ifndef HAVE_BUNDLED_PCRE
-# define HAVE_BUNDLED_PCRE 1
-#endif

@@ -16,9 +16,11 @@ Open-source racing game built on the Raydium 3D engine.
 - libvorbis, libvorbisfile, libogg
 - X11, Xinerama
 - v4l-utils (libv4lconvert)
+- bison
+- re2c
 
-**Optional:**
-- PHP 5.3 (bundled at `external/php-5.3.27`) — needed for online features (scores, track sharing). Disable with `-DPHP_SUPPORT=OFF`.
+**Required:**
+- PHP 5.3 (bundled at `external/php-5.3.27`) — needed for story mode and online features (scores, track sharing).
 
 Debian/Ubuntu:
 ```sh
@@ -70,7 +72,6 @@ Kids mode unlocks all tracks (no need to complete beginners mode first) and show
 | Option | Default | Description |
 |--------|---------|-------------|
 | `KIDS_MODE` | `OFF` | Unlock all tracks, add speed/accel sliders |
-| `PHP_SUPPORT` | `ON` | Enable PHP scripting (for online features) |
 
 ### Running
 
