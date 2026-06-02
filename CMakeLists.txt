@@ -119,7 +119,18 @@ endif()
 
 set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
 set(PHP_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}/php-build")
-set(PHP_LIBRARY    "${PHP_BUILD_DIR}/libs/libphp5.so")
+
+# On powerpc64 ELFv2 the shared library build produces libphp5.so with
+# internal undefined symbols, so we use static + whole-archive instead.
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
+  set(PHP_EMBED static)
+  set(PHP_LIBRARY "${PHP_BUILD_DIR}/libs/libphp5.a")
+  set(PHP_IMPORT_TYPE STATIC)
+else()
+  set(PHP_EMBED shared)
+  set(PHP_LIBRARY "${PHP_BUILD_DIR}/libs/libphp5.so")
+  set(PHP_IMPORT_TYPE SHARED)
+endif()
 
 set(PHP_CONFIGURE_STAMP "${PHP_BUILD_DIR}/config.status")
 
@@ -127,7 +138,7 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
   COMMAND ${CMAKE_COMMAND} -E make_directory "${PHP_BUILD_DIR}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           CFLAGS="-std=gnu89" ac_cv_prog_RE2C=no "${PHP_SOURCE_DIR}/configure"
-                      --enable-embed=shared --with-pic
+                      "--enable-embed=${PHP_EMBED}" --with-pic
                       --without-pear --disable-cgi --disable-cli
                       --disable-simplexml --disable-xmlreader
                       --disable-xmlwriter --disable-dom
@@ -147,7 +158,7 @@ add_custom_command(OUTPUT "${PHP_LIBRARY}"
 
 add_custom_target(libphp5 DEPENDS "${PHP_LIBRARY}")
 
-add_library(php5 SHARED IMPORTED GLOBAL)
+add_library(php5 ${PHP_IMPORT_TYPE} IMPORTED GLOBAL)
 set_target_properties(php5 PROPERTIES IMPORTED_LOCATION ${PHP_LIBRARY})
 add_dependencies(php5 libphp5)
 
@@ -317,9 +328,14 @@ target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
 
-# php5 is a shared library; linked into raydium so all Zend symbols
-# are resolved internally in the DSO.
-target_link_libraries(raydium PRIVATE php5)
+if(PHP_IMPORT_TYPE STREQUAL "SHARED")
+  # x86_64: shared php5 linked into raydium directly
+  target_link_libraries(raydium PRIVATE php5)
+else()
+  # ppc64: static php5 would cause circular deps in a DSO; resolve at
+  # executable link time instead
+  target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
+endif()
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -327,17 +343,42 @@ target_include_directories(raydium
     $<INSTALL_INTERFACE:include>
 )
 
-# ─── ManiaDrive executable ───────────────────────────────
-add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
-target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
+# ─── Executables ──────────────────────────────────────────
+# The static (ppc64) and shared (x86_64) builds need different
+# link strategies.  Shared: just -lphp5.so.  Static: whole-archive
+# + extra deps pulled in by all PHP objects.
 
-target_compile_definitions(mania_drive
-  PRIVATE
-    FORCE_LIBRAYDIUM
-    PHP_SUPPORT
-    ODE_SUPPORT
-)
+macro(add_mania_executable NAME SOURCE)
+  add_executable(${NAME} ${SOURCE})
+  target_include_directories(${NAME} PRIVATE ${PHP_INCLUDE_DIRS})
+
+  if(PHP_IMPORT_TYPE STREQUAL "SHARED")
+    target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+  else()
+    target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m
+      ZLIB::ZLIB LibXml2::LibXml2 dl pthread)
+    target_link_options(${NAME} PRIVATE
+      "SHELL:-Wl,--whole-archive ${PHP_LIBRARY} -Wl,--no-whole-archive"
+      "LINKER:--allow-multiple-definition"
+    )
+    add_dependencies(${NAME} php5)
+  endif()
+
+  target_compile_definitions(${NAME}
+    PRIVATE
+      FORCE_LIBRAYDIUM
+      PHP_SUPPORT
+      ${ARGN}
+  )
+
+  set_target_properties(${NAME} PROPERTIES
+    OUTPUT_NAME ${NAME}
+    RUNTIME_OUTPUT_NAME ${NAME}
+    BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"
+  )
+endmacro()
+
+add_mania_executable(mania_drive mania_drive.c ODE_SUPPORT)
 
 if(KIDS_MODE)
   target_compile_definitions(mania_drive PRIVATE KIDS_MODE)
@@ -346,28 +387,7 @@ else()
   message(STATUS "Kids mode: OFF")
 endif()
 
-set_target_properties(mania_drive PROPERTIES
-  OUTPUT_NAME mania_drive
-  RUNTIME_OUTPUT_NAME mania_drive
-  BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"
-)
-
-# ─── Level Editor executable ─────────────────────────────
-add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
-target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
-
-target_compile_definitions(level_editor
-  PRIVATE
-    FORCE_LIBRAYDIUM
-    PHP_SUPPORT
-)
-
-set_target_properties(level_editor PROPERTIES
-  OUTPUT_NAME level_editor
-  RUNTIME_OUTPUT_NAME level_editor
-  BUILD_RPATH "${CMAKE_CURRENT_BINARY_DIR};${PHP_BUILD_DIR}/libs"
-)
+add_mania_executable(level_editor mania2.c)
 
 # ─── Install ──────────────────────────────────────────────
 include(GNUInstallDirs)
