@@ -131,6 +131,7 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
                       --without-pear --disable-cgi --disable-cli
                       --disable-simplexml --disable-xmlreader
                       --disable-xmlwriter --disable-dom
+                      --without-libxml
                       --with-zlib
                       --disable-phar
                       --without-gd --without-jpeg-dir
@@ -329,7 +330,14 @@ target_include_directories(raydium
 
 # ─── ManiaDrive executable ───────────────────────────────
 add_executable(mania_drive mania_drive.c)
-target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(mania_drive PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
+target_link_options(mania_drive PRIVATE
+  # whole-archive forces all php5 objects in, resolving circular Zend deps
+  "SHELL:-Wl,--whole-archive $<TARGET_FILE:php5> -Wl,--no-whole-archive"
+  # both scanners have yyleng; take the first when both are pulled in
+  "LINKER:--allow-multiple-definition"
+)
+add_dependencies(mania_drive php5)
 
 target_include_directories(mania_drive PRIVATE ${PHP_INCLUDE_DIRS})
 
@@ -354,7 +362,12 @@ set_target_properties(mania_drive PROPERTIES
 
 # ─── Level Editor executable ─────────────────────────────
 add_executable(level_editor mania2.c)
-target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
+target_link_libraries(level_editor PRIVATE raydium OpenGL::GL m ZLIB::ZLIB)
+target_link_options(level_editor PRIVATE
+  "SHELL:-Wl,--whole-archive $<TARGET_FILE:php5> -Wl,--no-whole-archive"
+  "LINKER:--allow-multiple-definition"
+)
+add_dependencies(level_editor php5)
 
 target_include_directories(level_editor PRIVATE ${PHP_INCLUDE_DIRS})
 
