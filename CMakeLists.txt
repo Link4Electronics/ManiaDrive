@@ -126,17 +126,9 @@ endif()
 set(PHP_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27")
 set(PHP_BUILD_DIR  "${CMAKE_CURRENT_BINARY_DIR}/php-build")
 
-# On powerpc64 ELFv2 the shared library build produces libphp5.so with
-# internal undefined symbols, so we use static + whole-archive instead.
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(powerpc|ppc)64")
-  set(PHP_EMBED static)
-  set(PHP_LIBRARY "${PHP_BUILD_DIR}/libs/libphp5.a")
-  set(PHP_IMPORT_TYPE STATIC)
-else()
-  set(PHP_EMBED shared)
-  set(PHP_LIBRARY "${PHP_BUILD_DIR}/libs/libphp5.so")
-  set(PHP_IMPORT_TYPE SHARED)
-endif()
+set(PHP_EMBED shared)
+set(PHP_LIBRARY "${PHP_BUILD_DIR}/libs/libphp5.so")
+set(PHP_IMPORT_TYPE SHARED)
 
 set(PHP_CONFIGURE_STAMP "${PHP_BUILD_DIR}/config.status")
 
@@ -158,6 +150,7 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
 add_custom_command(OUTPUT "${PHP_LIBRARY}"
   COMMAND cd "${PHP_BUILD_DIR}" &&
           make "EXTRA_CFLAGS=-fvisibility=default -DHAVE_BUNDLED_PCRE=1 -DPHP_EXT_DES_CRYPT=0 -DPHP_MD5_CRYPT=0 -DPHP_BLOWFISH_CRYPT=0 -DZEND_DLIMPORT="
+              "LDFLAGS=-Wl,--allow-shlib-undefined -Wl,--allow-multiple-definition"
   DEPENDS "${PHP_CONFIGURE_STAMP}"
   COMMENT "Building PHP 5.3"
 )
@@ -333,16 +326,7 @@ endif()
 target_link_libraries(raydium PUBLIC ODE::ODE)
 
 target_include_directories(raydium PRIVATE ${PHP_INCLUDE_DIRS})
-
-if(PHP_IMPORT_TYPE STREQUAL "SHARED")
-  # x86_64: shared php5 linked into raydium directly
-  target_link_libraries(raydium PRIVATE php5)
-else()
-  # ppc64: static php5 would cause circular deps in a DSO; resolve at
-  # executable link time instead
-  target_link_options(raydium PRIVATE "LINKER:--allow-shlib-undefined")
-  add_dependencies(raydium php5)
-endif()
+target_link_libraries(raydium PRIVATE php5)
 
 # Ensure raydium headers are findable by consuming targets
 target_include_directories(raydium
@@ -351,25 +335,11 @@ target_include_directories(raydium
 )
 
 # ─── Executables ──────────────────────────────────────────
-# The static (ppc64) and shared (x86_64) builds need different
-# link strategies.  Shared: just -lphp5.so.  Static: whole-archive
-# + extra deps pulled in by all PHP objects.
 
 macro(add_mania_executable NAME SOURCE)
   add_executable(${NAME} ${SOURCE})
   target_include_directories(${NAME} PRIVATE ${PHP_INCLUDE_DIRS})
-
-  if(PHP_IMPORT_TYPE STREQUAL "SHARED")
-    target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
-  else()
-    target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m
-      ZLIB::ZLIB LibXml2::LibXml2 dl pthread)
-    target_link_options(${NAME} PRIVATE
-      "SHELL:-Wl,--whole-archive ${PHP_LIBRARY} -Wl,--no-whole-archive"
-      "LINKER:--allow-multiple-definition"
-    )
-    add_dependencies(${NAME} php5)
-  endif()
+  target_link_libraries(${NAME} PRIVATE raydium OpenGL::GL m php5 ZLIB::ZLIB)
 
   target_compile_definitions(${NAME}
     PRIVATE

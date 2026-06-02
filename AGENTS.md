@@ -35,11 +35,11 @@ EXTRA_CFLAGS="\
 - `PHP_EXT_DES_CRYPT=0`, `PHP_MD5_CRYPT=0`, `PHP_BLOWFISH_CRYPT=0` — configure doesn't define these on powerpc64; crypt functions are unused by the game so just disable
 - `ac_cv_prog_RE2C=no` — cached autoconf var prevents configure from running re2c (system re2c too new, would clobber pre-generated scanner .c files). Using `RE2C=/bin/true` would silently produce empty scanner output.
 
-### Why shared library (not static)
+### Why shared library (not static) — both architectures
 - `--enable-embed=shared` produces `libphp5.so` which resolves all internal Zend symbols within itself
-- Static archive (`libphp5.a`) has circular dependencies between Zend objects that the GNU linker can't resolve without `--whole-archive` or `--start-group`/`--end-group`
-- CMake consistently separates `-Wl,` flags from library paths, making `--whole-archive` wrapping unreliable
-- Shared lib avoids both the circular-dep and hidden-symbol issues in one go
+- Static archive (`libphp5.a`) has circular dependencies between Zend objects that the GNU linker can't resolve even with `--whole-archive` on powerpc64 ELFv2
+- On ELFv2, configure misdetects `finite()`/`isinf()`/`isnan()` etc., so function bodies for `zend_finite`, `zend_isinf`, `zend_isnan` are conditionally excluded — but callers still reference them, producing unresolved symbols
+- `LDFLAGS=-Wl,--allow-shlib-undefined` is passed to PHP's `make` so `libphp5.so` links despite these; the symbols resolve at runtime from other objects within the same .so
 
 ### Linking
 - `target_link_libraries(raydium PRIVATE php5)` — libraydium.so has DT_NEEDED on libphp5.so
