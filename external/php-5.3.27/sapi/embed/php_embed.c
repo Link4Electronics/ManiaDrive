@@ -232,6 +232,18 @@ EMBED_SAPI_API void php_embed_shutdown(TSRMLS_D)
 }
 
 /*
+ * Weak fallback for language_scanner_globals — zend_language_scanner.c
+ * provides the real definition on most platforms, but on some (e.g.
+ * powerpc64 ELFv2) the symbol may not be exported from the .so for
+ * reasons ranging from visibility quirks to missing object files.
+ * A weak definition never shadows a strong one, so this is safe.
+ */
+#ifdef __GNUC__
+__attribute__((weak))
+#endif
+zend_php_scanner_globals language_scanner_globals;
+
+/*
  * Provide zend_isnan/zend_isinf/zend_finite on POSIX where
  * isnan/isinf are macros and finite is a libm function.
  */

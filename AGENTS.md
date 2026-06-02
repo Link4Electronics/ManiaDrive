@@ -71,6 +71,12 @@ PHP 5.3.27 has several symbols that are only defined on Windows/NetWare (`zend_c
 
 **Fix**: `sapi/embed/php_embed.c` provides implementations for all four using standard C library functions (`isnan`, `isinf`, `finite`, `vsprintf`). This file is guaranteed compiled in the embedded SAPI build. Since `php_embed.c` is part of the PHP source tree, this could be ported to a patch file in future.
 
+### `language_scanner_globals` missing on powerpc64
+
+On powerpc64 ELFv2, `language_scanner_globals` (defined in `Zend/zend_language_scanner.c` under `#else` of `#ifdef ZTS`) may not be exported from `libphp5.so`. The root cause is unclear — possibly visibility quirks, or the object file being excluded from the link.
+
+**Fix**: `sapi/embed/php_embed.c` provides a weak (`__attribute__((weak))`) definition of `zend_php_scanner_globals language_scanner_globals`. On platforms where `zend_language_scanner.c` defines it strongly (x86_64), the weak symbol is ignored. On powerpc64, the weak definition fills the gap. Added alongside the existing POSIX-symbol stubs.
+
 ## Building
 
 ```sh
