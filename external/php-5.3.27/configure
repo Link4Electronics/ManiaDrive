@@ -3001,7 +3001,7 @@ test -n "$YACC" || YACC="yacc"
 
   
   # we only support certain bison versions
-  bison_version_list="1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 2.4.2 2.4.3 2.5 2.5.1 2.6 2.6.1 2.6.2"
+  bison_version_list="1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 2.4.2 2.4.3 2.5 2.5.1 2.6 2.6.1 2.6.2 2.7 3.0 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8"
 
   # for standalone build of Zend Engine
   test -z "$SED" && SED=sed
@@ -3014,7 +3014,7 @@ if eval "test \"`echo '$''{'php_cv_bison_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   
-      bison_version_vars=`bison --version 2> /dev/null | grep 'GNU Bison' | cut -d ' ' -f 4 | $SED -e 's/\./ /' | tr -d a-z`
+      bison_version_vars=`bison --version 2> /dev/null | grep 'GNU Bison' | cut -d ' ' -f 4 | $SED -e 's/\./ /g' | tr -d a-z`
       php_cv_bison_version=invalid
       if test -n "$bison_version_vars"; then
         set $bison_version_vars
@@ -105197,7 +105197,7 @@ fi
 
 
   # we only support certain bison versions
-  bison_version_list="1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 2.4.2 2.4.3 2.5 2.5.1 2.6 2.6.1 2.6.2"
+  bison_version_list="1.28 1.35 1.75 1.875 2.0 2.1 2.2 2.3 2.4 2.4.1 2.4.2 2.4.3 2.5 2.5.1 2.6 2.6.1 2.6.2 2.7 3.0 3.1 3.2 3.3 3.4 3.5 3.6 3.7 3.8"
 
   # for standalone build of Zend Engine
   test -z "$SED" && SED=sed
@@ -105210,7 +105210,7 @@ if eval "test \"`echo '$''{'php_cv_bison_version'+set}'`\" = set"; then
   echo $ac_n "(cached) $ac_c" 1>&6
 else
   
-      bison_version_vars=`bison --version 2> /dev/null | grep 'GNU Bison' | cut -d ' ' -f 4 | $SED -e 's/\./ /' | tr -d a-z`
+      bison_version_vars=`bison --version 2> /dev/null | grep 'GNU Bison' | cut -d ' ' -f 4 | $SED -e 's/\./ /g' | tr -d a-z`
       php_cv_bison_version=invalid
       if test -n "$bison_version_vars"; then
         set $bison_version_vars

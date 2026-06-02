@@ -25,13 +25,14 @@ Debian/Ubuntu:
 sudo apt install build-essential cmake libgl1-mesa-dev libglu1-mesa-dev \
   libglew-dev libopenal-dev libalut-dev libjpeg-dev libpng-dev zlib1g-dev \
   libcurl4-openssl-dev libxml2-dev libvorbis-dev libogg-dev \
-  libx11-dev libxinerama-dev libv4l-dev
+  libx11-dev libxinerama-dev libv4l-dev bison re2c
 ```
 
 Arch Linux:
 ```sh
 sudo pacman -S base-devel cmake mesa glu glew openal freealut libjpeg-turbo \
-  libpng zlib curl libxml2 libvorbis libogg libx11 libxinerama v4l-utils
+  libpng zlib curl libxml2 libvorbis libogg libx11 libxinerama v4l-utils \
+  bison re2c
 ```
 
 Fedora:
@@ -39,7 +40,7 @@ Fedora:
 sudo dnf install gcc gcc-c++ cmake mesa-libGL-devel mesa-libGLU-devel \
   glew-devel openal-soft-devel freealut-devel libjpeg-turbo-devel libpng-devel \
   zlib-devel libcurl-devel libxml2-devel libvorbis-devel libogg-devel \
-  libX11-devel libXinerama-devel libv4l-devel
+  libX11-devel libXinerama-devel libv4l-devel bison re2c
 ```
 
 ### Build

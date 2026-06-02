@@ -142,6 +142,17 @@ endif()
 
 # ─── PHP 5.3 Embedded ────────────────────────────────────
 if(PHP_SUPPORT)
+  find_program(PHP_BISON bison)
+  if(NOT PHP_BISON)
+    message(STATUS "bison not found — will use pre-generated PHP parser files")
+  else()
+    message(STATUS "bison found: ${PHP_BISON}")
+  endif()
+  find_program(PHP_RE2C re2c)
+  if(NOT PHP_RE2C)
+    message(STATUS "re2c not found — PHP parser regeneration disabled, using pre-generated files")
+  endif()
+
   set(PHP_EXTRACTED_DIR "${CMAKE_CURRENT_SOURCE_DIR}/external/php-5.3.27" CACHE PATH
     "Path to pre-extracted PHP 5.3 source tree. Set to empty to use tarball.")
 
