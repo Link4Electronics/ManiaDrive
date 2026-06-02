@@ -97,6 +97,12 @@ Same pattern as `language_scanner_globals` — defined in `Zend/zend_ini_scanner
 
 **Fix**: `sapi/embed/php_embed.c` provides a weak `__attribute__((weak))` definition of `zend_ini_scanner_globals ini_scanner_globals`, right after the existing `language_scanner_globals` fallback.
 
+### `zendparse` missing on powerpc64
+
+`zendparse` (the `yyparse` function from `zend_language_parser.c`) is defined without `ZEND_API`, so the visibility patch on `zend_config.h` doesn't apply to it.
+
+**Fix**: Added `ZEND_API` qualifier to all four preprocessor branches of the `yyparse`/`zendparse` definition in `Zend/zend_language_parser.c`. The visibility attribute from `ZEND_API` now forces `zendparse` to be exported.
+
 ## ODE (Open Dynamics Engine)
 
 ### Precision

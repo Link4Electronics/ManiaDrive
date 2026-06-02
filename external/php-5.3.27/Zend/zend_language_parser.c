@@ -3091,20 +3091,20 @@ int yyparse ();
 #ifdef YYPARSE_PARAM
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
-int
+ZEND_API int
 yyparse (void *YYPARSE_PARAM)
 #else
-int
+ZEND_API int
 yyparse (YYPARSE_PARAM)
     void *YYPARSE_PARAM;
 #endif
 #else /* ! YYPARSE_PARAM */
 #if (defined __STDC__ || defined __C99__FUNC__ \
      || defined __cplusplus || defined _MSC_VER)
-int
+ZEND_API int
 yyparse (void)
 #else
-int
+ZEND_API int
 yyparse ()
 
 #endif
