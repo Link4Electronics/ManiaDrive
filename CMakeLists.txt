@@ -173,7 +173,7 @@ if(PHP_SUPPORT)
                           --enable-soap --without-gd --without-jpeg-dir
                           --without-png-dir
                           --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-      COMMAND make -C "${PHP_SOURCE_DIR}"
+      COMMAND make -C "${PHP_SOURCE_DIR}" EXTRA_CFLAGS="-DHAVE_BUNDLED_PCRE=1"
       BYPRODUCTS "${PHP_LIBRARY}"
       WORKING_DIRECTORY "${PHP_EXTRACTED_DIR}"
       COMMENT "Configuring & building PHP 5.3 (pre-extracted source)"
@@ -231,7 +231,7 @@ if(PHP_SUPPORT)
                           --without-jpeg-dir
                           --without-png-dir
                           --with-libxml-dir=${LIBXML2_INCLUDE_DIR}/..
-    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR}
+    BUILD_COMMAND        make -C ${PHP_SOURCE_DIR} EXTRA_CFLAGS=-DHAVE_BUNDLED_PCRE=1
     BUILD_IN_SOURCE      TRUE
     INSTALL_COMMAND      ""
     LOG_CONFIGURE        1
