@@ -13,7 +13,7 @@
 --enable-embed=shared --with-pic
 --without-pear --disable-cgi --disable-cli
 --disable-simplexml --disable-xmlreader --disable-xmlwriter --disable-dom
---with-zlib --disable-phar
+--with-zlib --with-curl --disable-phar
 --without-gd --without-jpeg-dir --without-png-dir
 ```
 
@@ -27,6 +27,11 @@ EXTRA_CFLAGS="\
   -DPHP_BLOWFISH_CRYPT=0 \
   -DZEND_DLIMPORT="
 ```
+
+### Asset downloading
+- PHP `--with-curl` is **required** so the game's PHP scripts (`rayphp/libfile.php`) can use `curl_init()`/`curl_exec()` to download assets from R3S repositories on first run
+- The original R3S asset servers (`fastrepo.raydium.org`, `repository.raydium.org`) are still online as of 2026
+- Without `--with-curl`, PHP's `curl_*` functions are undefined and asset downloads silently fail, resulting in a blank/black screen after the menu loads
 
 ### Why these flags
 - `-fvisibility=default` — powers out hidden-symbol errors (`_emalloc`, `_efree`) on powerpc64 ELFv2 when DSO references static archive symbols
@@ -76,6 +81,14 @@ PHP 5.3.27 has several symbols that are only defined on Windows/NetWare (`zend_c
 On powerpc64 ELFv2, `language_scanner_globals` (defined in `Zend/zend_language_scanner.c` under `#else` of `#ifdef ZTS`) may not be exported from `libphp5.so`. The root cause is unclear — possibly visibility quirks, or the object file being excluded from the link.
 
 **Fix**: `sapi/embed/php_embed.c` provides a weak (`__attribute__((weak))`) definition of `zend_php_scanner_globals language_scanner_globals`. On platforms where `zend_language_scanner.c` defines it strongly (x86_64), the weak symbol is ignored. On powerpc64, the weak definition fills the gap. Added alongside the existing POSIX-symbol stubs.
+
+### `compile_file` / `compile_string` / `compile_filename` missing on powerpc64
+
+These symbols are also defined in `zend_language_scanner.c`. On ppc64 ELFv2 with GCC 14, `-fvisibility=default` (passed via `EXTRA_CFLAGS`) may not take effect, causing all symbols from this file to be compiled with `-fvisibility=hidden` (from `CFLAGS_CLEAN`).
+
+**Fixes**:
+1. `CMakeLists.txt` patches `Zend/zend_config.h` after configure to change `#define ZEND_API` to `#define ZEND_API __attribute__((visibility("default")))`. This attaches an explicit default-visibility attribute to every `ZEND_API`-marked symbol regardless of the active `-fvisibility` flag.
+2. `Zend/zend_language_scanner.c` — the definitions of `compile_filename` and `compile_string` were missing the `ZEND_API` qualifier that their declarations in `zend_compile.h` carried. Added it so the visibility attribute from fix 1 also applies to them.
 
 ## Building
 

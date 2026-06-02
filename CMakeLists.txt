@@ -149,6 +149,7 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
                       --disable-xmlwriter --disable-dom
                       --with-zlib
                       --disable-phar
+                      --with-curl
                       --without-gd --without-jpeg-dir
                       --without-png-dir
   COMMENT "Configuring PHP 5.3"
@@ -158,6 +159,13 @@ add_custom_command(OUTPUT "${PHP_CONFIGURE_STAMP}"
   COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake/gen_php_config_h_in.sh"
           "${PHP_BUILD_DIR}"
           "${PHP_SOURCE_DIR}"
+  # Patch zend_config.h so ZEND_API carries an explicit default-visibility
+  # attribute.  On powerpc64 ELFv2 the -fvisibility=default in EXTRA_CFLAGS
+  # does not always take effect (GCC 14 quirk?), making ZEND_API symbols
+  # invisible from libphp5.so.  The attribute is a no-op on x86-64.
+  COMMAND "${CMAKE_COMMAND}"
+          -D "PHP_ZEND_CONFIG=${PHP_BUILD_DIR}/Zend/zend_config.h"
+          -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/patch_zend_config.cmake"
 )
 
 add_custom_command(OUTPUT "${PHP_LIBRARY}"

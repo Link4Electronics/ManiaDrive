@@ -387,7 +387,7 @@ ZEND_API zend_op_array *compile_file(zend_file_handle *file_handle, int type TSR
 }
 
 
-zend_op_array *compile_filename(int type, zval *filename TSRMLS_DC)
+ZEND_API zend_op_array *compile_filename(int type, zval *filename TSRMLS_DC)
 {
 	zend_file_handle file_handle;
 	zval tmp;
@@ -488,7 +488,7 @@ ZEND_API size_t zend_get_scanned_file_offset(TSRMLS_D)
 }
 
 
-zend_op_array *compile_string(zval *source_string, char *filename TSRMLS_DC)
+ZEND_API zend_op_array *compile_string(zval *source_string, char *filename TSRMLS_DC)
 {
 	zend_lex_state original_lex_state;
 	zend_op_array *op_array = (zend_op_array *) emalloc(sizeof(zend_op_array));
