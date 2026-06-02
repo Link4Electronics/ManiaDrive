@@ -151,6 +151,7 @@ set(PHP_INCLUDE_DIRS
   ${PHP_SOURCE_DIR}/include
   ${PHP_BUILD_DIR}
   ${PHP_BUILD_DIR}/main
+  ${PHP_BUILD_DIR}/Zend
 )
 
 # ─── Raydium Engine Library ──────────────────────────────
