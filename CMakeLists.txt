@@ -153,7 +153,6 @@ if(PHP_SUPPORT)
 
     add_custom_target(libphp5
       COMMAND cd "${PHP_SOURCE_DIR}" &&
-              test -f configure || autoreconf -fi &&
               CFLAGS="-std=gnu89" ./configure --enable-embed=static --with-pic
                           --without-pear --disable-cgi --disable-cli
                           --disable-phpdbg --disable-fpm
