@@ -1,0 +1,513 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="raydium_dll" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="DebugDLL">
+				<Option output="..\bin\raydiumd.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Debugdll\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option host_application="webcamd.exe" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG" />
+					<Add option="-D_DEBUG" />
+					<Add option="-DRAYDLL" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseDLL">
+				<Option output="..\bin\raydium.dll" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\Releasedll\" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-DRAYDLL" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="DebugStatic">
+				<Option output="..\bin\libraydiumsd.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\Debugs\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option host_application="webcamd.exe" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG" />
+					<Add option="-D_DEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseStatic">
+				<Option output="..\bin\libraydiums.a" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="" />
+				<Option object_output="obj\Releases\" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+			<Target title="DebugDLL(index.c)">
+				<Option output="..\bin\raydiumd.dll" prefix_auto="0" extension_auto="0" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DDEBUG" />
+					<Add option="-D_DEBUG" />
+					<Add option="-DRAYDLL" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseDLL(index.c)">
+				<Option output="..\bin\raydium.dll" prefix_auto="0" extension_auto="0" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-DRAYDLL" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="ALL" targets="DebugDLL;ReleaseDLL;DebugStatic;ReleaseStatic;DebugDLL(index.c);ReleaseDLL(index.c);" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-isystem..\include" />
+			<Add option="-isystem..\include\php" />
+			<Add option="-isystem..\include\php\Zend" />
+			<Add option="-isystem..\include\php\main" />
+			<Add option="-isystem..\include\php\TSRM" />
+			<Add directory="..\raydium" />
+			<Add directory="..\include\php\regex" />
+			<Add directory="..\include\ode\include" />
+			<Add directory="..\include" />
+		</Compiler>
+		<Linker>
+			<Add library="php5ts" />
+			<Add library="ode" />
+			<Add library="opengl32" />
+			<Add library="gdi32" />
+			<Add library="glu32" />
+			<Add library="ws2_32" />
+			<Add library="jpeg" />
+			<Add library="mingwex" />
+			<Add library="stdc++" />
+			<Add library="glew32" />
+			<Add library="alut" />
+			<Add library="openal32" />
+			<Add library="libvorbisfile" />
+			<Add library="libvorbis" />
+			<Add library="libogg" />
+			<Add library="winmm" />
+			<Add library="intl" />
+			<Add library="vfw32" />
+			<Add library="libcal3d" />
+			<Add directory="..\lib" />
+		</Linker>
+		<Unit filename="..\raydium\raydium\atexit.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\background.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\callback.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\camera.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\capture.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\clear.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\cli.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\compat.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\console.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\file.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\file_tri.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\fog.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\gui.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\hdr.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\index.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL(index.c)" />
+			<Option target="ReleaseDLL(index.c)" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\init.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\internal.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\joy.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\key.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\land.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\lensflare.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\light.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\live.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\log.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\math.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\mouse.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\myglut.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\network.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\normal.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\object.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\ode.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\osd.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\parser.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\particle2.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\path.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\php.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\profile.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\random.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\rayphp.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\reg_api.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\register.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\render.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\shader.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\shadow.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\signal.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\sky.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\sound.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\sprites.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\texture.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\timecall.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\vertex.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\video.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\web.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\window.c">
+			<Option compilerVar="CC" />
+			<Option target="DebugDLL" />
+			<Option target="ReleaseDLL" />
+			<Option target="DebugStatic" />
+			<Option target="ReleaseStatic" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

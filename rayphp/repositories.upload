@@ -1,0 +1,12 @@
+# This file lists all repositories used for uploading:
+# You can use http/https URL (R3S servers) or ftp/ftps servers (classic FTP).
+
+# Only first valid server will be used in this list.
+# No test is done to see if your file is newer than server side one.
+# Warning ! Be carefull with "/" at the end of urls since Raydium client
+# do not supports redirections !
+
+http://anonymous:nopass@repository.raydium.org/
+ftp://anonymous:nopass@ftp.raydium.org:29/
+#http://anonymous:nopass@localhost/raydium/repository/
+#http://anonymous:nopass@localhost/

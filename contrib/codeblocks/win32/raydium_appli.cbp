@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="raydium_appli" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="DebugDLL">
+				<Option output="..\bin\$(PROJECT_FILENAME)d.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\DebugDll" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DRAYDLL" />
+					<Add option="-DFORCE_LIBRAYDIUM" />
+					<Add option="-DDEBUG" />
+					<Add option="-D_DEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="raydiumd" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseDLL">
+				<Option output="..\bin\$(PROJECT_FILENAME).exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\ReleaseDll\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-DRAYDLL" />
+					<Add option="-DFORCE_LIBRAYDIUM" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-mwindows" />
+					<Add library="raydium" />
+				</Linker>
+			</Target>
+			<Target title="DebugStatic">
+				<Option output="..\bin\$(PROJECT_FILENAME)ds.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\DebugStatic" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--com com1 --joydev 1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-DFORCE_LIBRAYDIUM" />
+					<Add option="-D_DEBUG" />
+					<Add option="-DDEBUG" />
+				</Compiler>
+				<Linker>
+					<Add library="libraydiumsd" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseStatic">
+				<Option output="..\bin\$(PROJECT_FILENAME)s.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\ReleaseStatic\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+					<Add option="-DFORCE_LIBRAYDIUM" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-mwindows" />
+					<Add library="libraydiums" />
+				</Linker>
+			</Target>
+			<Target title="DebugFullStatic">
+				<Option output="..\bin\$(PROJECT_FILENAME)dfs.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\DebugFullStatic" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--com com1 --joydev 1" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_DEBUG" />
+					<Add option="-DDEBUG" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseFullStatic">
+				<Option output="..\bin\$(PROJECT_FILENAME)fs.exe" prefix_auto="0" extension_auto="0" />
+				<Option object_output="obj\ReleaseFullStatic\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
+				<Compiler>
+					<Add option="-fexpensive-optimizations" />
+					<Add option="-O3" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-mwindows" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="DebugDLL;ReleaseDLL;DebugStatic;ReleaseStatic;DebugFullStatic;ReleaseFullStatic;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-isystem..\include" />
+			<Add option="-isystem..\include\php" />
+			<Add option="-isystem..\include\php\Zend" />
+			<Add option="-isystem..\include\php\main" />
+			<Add option="-isystem..\include\php\TSRM" />
+			<Add directory="..\include\php\regex" />
+			<Add directory="..\include\ode\include" />
+			<Add directory="..\raydium" />
+		</Compiler>
+		<Linker>
+			<Add library="php5ts" />
+			<Add library="ode" />
+			<Add library="opengl32" />
+			<Add library="gdi32" />
+			<Add library="glu32" />
+			<Add library="ws2_32" />
+			<Add library="jpeg" />
+			<Add library="mingwex" />
+			<Add library="stdc++" />
+			<Add library="libglew32" />
+			<Add library="alut" />
+			<Add library="openal32" />
+			<Add library="vorbisfile" />
+			<Add library="vorbis" />
+			<Add library="ogg" />
+			<Add library="intl" />
+			<Add library="winmm" />
+			<Add library="vfw32" />
+			<Add library="AR" />
+			<Add directory="..\bin" />
+			<Add directory="..\lib" />
+		</Linker>
+		<Unit filename="..\raydium\contrib\raydium-extra\ragdolls\ragdoll2.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\raydium\raydium\atexit.h" />
+		<Unit filename="..\raydium\raydium\common.h" />
+		<Unit filename="..\raydium\raydium\config.h" />
+		<Unit filename="..\raydium\raydium\gui.h" />
+		<Unit filename="..\raydium\raydium\headers\atexit.h" />
+		<Unit filename="..\raydium\raydium\headers\background.h" />
+		<Unit filename="..\raydium\raydium\headers\callback.h" />
+		<Unit filename="..\raydium\raydium\headers\camera.h" />
+		<Unit filename="..\raydium\raydium\headers\capture.h" />
+		<Unit filename="..\raydium\raydium\headers\clear.h" />
+		<Unit filename="..\raydium\raydium\headers\cli.h" />
+		<Unit filename="..\raydium\raydium\headers\console.h" />
+		<Unit filename="..\raydium\raydium\headers\file.h" />
+		<Unit filename="..\raydium\raydium\headers\file_tri.h" />
+		<Unit filename="..\raydium\raydium\headers\fog.h" />
+		<Unit filename="..\raydium\raydium\headers\gui.h" />
+		<Unit filename="..\raydium\raydium\headers\hdr.h" />
+		<Unit filename="..\raydium\raydium\headers\init.h" />
+		<Unit filename="..\raydium\raydium\headers\internal.h" />
+		<Unit filename="..\raydium\raydium\headers\joy.h" />
+		<Unit filename="..\raydium\raydium\headers\key.h" />
+		<Unit filename="..\raydium\raydium\headers\land.h" />
+		<Unit filename="..\raydium\raydium\headers\light.h" />
+		<Unit filename="..\raydium\raydium\headers\live.h" />
+		<Unit filename="..\raydium\raydium\headers\log.h" />
+		<Unit filename="..\raydium\raydium\headers\main.h" />
+		<Unit filename="..\raydium\raydium\headers\misc.h" />
+		<Unit filename="..\raydium\raydium\headers\mouse.h" />
+		<Unit filename="..\raydium\raydium\headers\myglut.h" />
+		<Unit filename="..\raydium\raydium\headers\network.h" />
+		<Unit filename="..\raydium\raydium\headers\normal.h" />
+		<Unit filename="..\raydium\raydium\headers\object.h" />
+		<Unit filename="..\raydium\raydium\headers\ode.h" />
+		<Unit filename="..\raydium\raydium\headers\ode_net.h" />
+		<Unit filename="..\raydium\raydium\headers\osd.h" />
+		<Unit filename="..\raydium\raydium\headers\parser.h" />
+		<Unit filename="..\raydium\raydium\headers\particle2.h" />
+		<Unit filename="..\raydium\raydium\headers\path.h" />
+		<Unit filename="..\raydium\raydium\headers\php.h" />
+		<Unit filename="..\raydium\raydium\headers\profile.h" />
+		<Unit filename="..\raydium\raydium\headers\random.h" />
+		<Unit filename="..\raydium\raydium\headers\rayphp.h" />
+		<Unit filename="..\raydium\raydium\headers\reg_api.h" />
+		<Unit filename="..\raydium\raydium\headers\register.h" />
+		<Unit filename="..\raydium\raydium\headers\render.h" />
+		<Unit filename="..\raydium\raydium\headers\shader.h" />
+		<Unit filename="..\raydium\raydium\headers\shadow.h" />
+		<Unit filename="..\raydium\raydium\headers\signal.h" />
+		<Unit filename="..\raydium\raydium\headers\sky.h" />
+		<Unit filename="..\raydium\raydium\headers\sound.h" />
+		<Unit filename="..\raydium\raydium\headers\texture.h" />
+		<Unit filename="..\raydium\raydium\headers\timecall.h" />
+		<Unit filename="..\raydium\raydium\headers\vertex.h" />
+		<Unit filename="..\raydium\raydium\headers\video.h" />
+		<Unit filename="..\raydium\raydium\headers\web.h" />
+		<Unit filename="..\raydium\raydium\headers\window.h" />
+		<Unit filename="..\raydium\raydium\index.h" />
+		<Unit filename="..\raydium\raydium\live.h" />
+		<Unit filename="..\raydium\raydium\main.h" />
+		<Unit filename="..\raydium\raydium\network.h" />
+		<Unit filename="..\raydium\raydium\ode.h" />
+		<Unit filename="..\raydium\raydium\particle2.h" />
+		<Unit filename="..\raydium\raydium\path.h" />
+		<Unit filename="..\raydium\raydium\shader.h" />
+		<Unit filename="..\raydium\raydium\shadow.h" />
+		<Unit filename="..\raydium\raydium\video.h" />
+		<Unit filename="..\raydium\raydium\web.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

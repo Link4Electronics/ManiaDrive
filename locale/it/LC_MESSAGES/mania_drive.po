@@ -1,0 +1,351 @@
+# Italian translations for PACKAGE package.
+# Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# vicente carro fernandez <vicente@localhost.localdomain>, 2006.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-02-23 23:42+0100\n"
+"PO-Revision-Date: 2006-10-14 11:44+0200\n"
+"Last-Translator: vicente carro fernandez <vicente@localhost.localdomain>\n"
+"Language-Team: Italian <tp@lists.linux.it>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: mania_drive.c:567
+msgid "You can't drive here yet !"
+msgstr ""
+
+#: mania_drive.c:583
+msgid "- Controls Help -"
+msgstr ""
+
+#: mania_drive.c:586
+msgid "Key Up : accelerate"
+msgstr ""
+
+#: mania_drive.c:587
+msgid "Key Down : brake / reverse"
+msgstr ""
+
+#: mania_drive.c:589
+msgid "Space : restart track"
+msgstr ""
+
+#: mania_drive.c:590
+msgid "Backspace : restart LAN clients"
+msgstr ""
+
+#: mania_drive.c:592
+msgid "F3 : default external view"
+msgstr ""
+
+#: mania_drive.c:593
+msgid "F6 : in-board fixed view"
+msgstr ""
+
+#: mania_drive.c:594
+msgid "C : switch camera"
+msgstr ""
+
+#: mania_drive.c:596
+msgid "... and maybe hidden ones :)"
+msgstr ""
+
+#: mania_drive.c:601
+msgid " joystick/joypad enabled"
+msgstr ""
+
+#: mania_drive.c:605
+msgid "(no joystick/joypad found)"
+msgstr ""
+
+#: mania_drive.c:609 mania_drive.c:648 mania_drive.c:911
+msgid "OK"
+msgstr ""
+
+#: mania_drive.c:646
+msgid "Cannot connect to server ..."
+msgstr ""
+
+#: mania_drive.c:656
+msgid "Please, wait ..."
+msgstr ""
+
+#: mania_drive.c:696
+msgid "- LAN Servers - "
+msgstr ""
+
+#: mania_drive.c:700
+msgid "Name"
+msgstr ""
+
+#: mania_drive.c:702
+msgid "Track"
+msgstr ""
+
+#: mania_drive.c:704
+msgid "Address"
+msgstr ""
+
+#: mania_drive.c:706
+msgid "Players"
+msgstr ""
+
+#: mania_drive.c:862
+#, c-format
+msgid "%s, with %i:%02i:%02i:%03i"
+msgstr ""
+
+#: mania_drive.c:878
+msgid "Can't download track from server !"
+msgstr ""
+
+#: mania_drive.c:889
+msgid "You need to restart the game"
+msgstr ""
+
+#: mania_drive.c:890
+msgid "to apply window settings"
+msgstr ""
+
+#: mania_drive.c:899
+msgid "  ^cCongratulations !"
+msgstr ""
+
+#: mania_drive.c:900
+msgid "  ^0Congratulations !"
+msgstr ""
+
+#: mania_drive.c:901
+msgid "Story mode is completed !"
+msgstr ""
+
+#: mania_drive.c:912
+msgid "Credits !"
+msgstr ""
+
+#: mania_drive.c:935 mania_drive.c:1139 mania_drive.c:1170
+msgid "Player Name :"
+msgstr ""
+
+#: mania_drive.c:940 mania_drive.c:998
+msgid "Track :"
+msgstr ""
+
+#: mania_drive.c:945
+msgid "Get best time"
+msgstr ""
+
+#: mania_drive.c:948 mania_drive.c:1003
+msgid "Drive !"
+msgstr ""
+
+#: mania_drive.c:951 mania_drive.c:1006 mania_drive.c:1107 mania_drive.c:1157
+#: mania_drive.c:1209
+msgid "<"
+msgstr ""
+
+#: mania_drive.c:953
+msgid "Live scores :"
+msgstr ""
+
+#: mania_drive.c:954
+msgid "http://maniadrive.raydium.org/"
+msgstr ""
+
+#: mania_drive.c:958
+msgid "WARNING: Internet connection failed !"
+msgstr ""
+
+#: mania_drive.c:959
+msgid "Now in offline mode. (set your proxy ?)"
+msgstr ""
+
+#: mania_drive.c:990
+msgid "- Other Tracks -"
+msgstr ""
+
+#: mania_drive.c:993
+msgid "Here, you can play offline with:"
+msgstr ""
+
+#: mania_drive.c:994
+msgid "- User tracks"
+msgstr ""
+
+#: mania_drive.c:995
+msgid "- Downloaded internet tracks"
+msgstr ""
+
+#: mania_drive.c:1061
+msgid "Drive"
+msgstr ""
+
+#: mania_drive.c:1061
+msgid "-"
+msgstr ""
+
+#: mania_drive.c:1086
+msgid "Story Mode"
+msgstr ""
+
+#: mania_drive.c:1089
+msgid "Beginners"
+msgstr ""
+
+#: mania_drive.c:1090
+msgid "Pro"
+msgstr ""
+
+#: mania_drive.c:1101
+msgid "Beginners mode completed !"
+msgstr ""
+
+#: mania_drive.c:1137
+msgid "- Network Game - "
+msgstr ""
+
+#: mania_drive.c:1144
+msgid "Server :"
+msgstr ""
+
+#: mania_drive.c:1149
+msgid "Connect"
+msgstr ""
+
+#: mania_drive.c:1151
+msgid "Search LAN"
+msgstr ""
+
+#: mania_drive.c:1178
+msgid " Camera lagging support"
+msgstr ""
+
+#: mania_drive.c:1181
+msgid "Camera's speed :"
+msgstr ""
+
+#: mania_drive.c:1186
+msgid "Engine volume :"
+msgstr ""
+
+#: mania_drive.c:1190 mania_drive.c:1197
+msgid "test"
+msgstr ""
+
+#: mania_drive.c:1193
+msgid "Music volume :"
+msgstr ""
+
+#: mania_drive.c:1200
+msgid " Shadow support (experimental)"
+msgstr ""
+
+#: mania_drive.c:1201
+msgid " Window mode with"
+msgstr ""
+
+#: mania_drive.c:1212
+msgid "Apply"
+msgstr ""
+
+#: mania_drive.c:1216
+msgid "Controls"
+msgstr ""
+
+#: mania_drive.c:1383
+msgid "- Select Game Mode - "
+msgstr ""
+
+#: mania_drive.c:1386
+msgid "Story"
+msgstr ""
+
+#: mania_drive.c:1387
+msgid "Internet Tracks"
+msgstr ""
+
+#: mania_drive.c:1388
+msgid "LAN Multiplayer"
+msgstr ""
+
+#: mania_drive.c:1389
+msgid "Other tracks"
+msgstr ""
+
+#: mania_drive.c:1390
+msgid "Options"
+msgstr ""
+
+#: mania_drive.c:1393
+msgid "Quit"
+msgstr ""
+
+#: mania_drive.c:1624
+msgid "Impressive ! Quicker than the author !"
+msgstr ""
+
+#: mania_drive.c:1626
+msgid "Right ! You got it."
+msgstr ""
+
+#: mania_drive.c:1634
+msgid "- Try again (press space key) -"
+msgstr ""
+
+#: mania_drive.c:1643
+#, c-format
+msgid "Your place: %i"
+msgstr ""
+
+#: mania_drive.c:1645
+#, c-format
+msgid "(unofficial track or connection failure)"
+msgstr ""
+
+#: mania_drive.c:1693
+msgid "   lap time:"
+msgstr ""
+
+#: mania_drive.c:1701
+msgid " party time:"
+msgstr ""
+
+#: mania_drive.c:1713
+msgid "  your best:"
+msgstr ""
+
+#: mania_drive.c:1721
+msgid "  gold time:"
+msgstr ""
+
+#: mania_drive.c:1745
+msgid "     record:"
+msgstr ""
+
+#: mania_drive.c:1779
+msgid "^0Game over !"
+msgstr ""
+
+#: mania_drive.c:1780
+msgid "^cGame over !"
+msgstr ""
+
+#: mania_drive.c:2628
+msgid "checkpoints:"
+msgstr ""
+
+#: mania_drive.c:2637
+#, c-format
+msgid "^0Ready ? Start in %i seconds"
+msgstr ""
+
+#: mania_drive.c:2638
+#, c-format
+msgid "^cReady ? Start in ^f%i^c seconds"
+msgstr ""

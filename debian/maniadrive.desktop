@@ -1,0 +1,10 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=ManiaDrive
+Comment=Car game with physics
+Exec=mania.bin
+Icon=maniadrive
+StartupWMClass=
+Terminal=false
+Type=Application
+Categories=Game;Racing;

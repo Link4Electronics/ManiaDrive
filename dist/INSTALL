@@ -1,0 +1,5 @@
+Full building instructions are available at :
+http://wiki.raydium.org/wiki/RaydiumInstallEn
+
+If Subversion is installed on your system, you can use
+"svn update" only to update all Raydium source tree.

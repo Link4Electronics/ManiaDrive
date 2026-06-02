@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Version=1.0
+Name=ManiaDrive Editor
+Comment=Editor fo ManiaDrive
+Exec=/usr/bin/maniadrive_editor
+Icon=maniadrive
+Terminal=false
+Type=Application
+Categories=Game;
+

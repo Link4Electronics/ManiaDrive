@@ -1,0 +1,11 @@
+# This file lists data (tri, tga, wav, ogg, ...) repositories.
+# Listed servers must run R3S (Raydium Server Side Scripts) files.
+
+# you can only use http and https protocols:
+# http://host.tld/path
+
+# main:
+http://fastrepo.raydium.org/
+http://repository.raydium.org/
+
+# we needs "contrib" servers

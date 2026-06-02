@@ -1,0 +1,5 @@
+This directory contains client PHP scripts for Raydium and other
+rayphp files.
+
+Some of the most interesting files of this directory are "repositories.*" ones,
+describing wich data servers are available for your applications data.

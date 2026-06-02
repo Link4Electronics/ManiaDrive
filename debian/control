@@ -1,0 +1,14 @@
+Source: maniadrive
+Section: games
+Priority: extra
+Maintainer: Aapo Rantalainen <aapo.rantalainen@gmail.com>
+Build-Depends: debhelper (>= 5), freeglut3-dev, libglew1.5-dev, libgl1-mesa-dev, libglu1-mesa-dev, libjpeg8-dev, libpng12-dev, libxinerama-dev, bison, flex,  libcurl4-gnutls-dev | libcurl4-dev, libxml2-dev, zlib1g-dev, libopenal-dev, libalut-dev, libogg-dev, libvorbis-dev, libvorbisfile3, wget, libv4l-dev
+Standards-Version: 3.7.2
+
+Package: maniadrive
+Architecture: any
+Depends: ${shlibs:Depends}
+Description: Car game with physics
+ http://maniadrive.raydium.org/
+ This package contains whole raydium-library.
+ This package doesn't contain any game data, because game handles them by itself.

@@ -1,0 +1,11 @@
+--- mania2_orig.c	2015-08-17 21:07:10.000000000 +0300
++++ mania2.c	2015-08-17 21:07:35.000000000 +0300
+@@ -15,7 +15,7 @@
+ #ifdef WIN32
+ #define MANIA_BINARY "mania_drive.exe"
+ #else
+-#define MANIA_BINARY "./mania_drive.static"
++#define MANIA_BINARY "maniadrive"
+ #endif
+ 
+ 

@@ -1,0 +1,33 @@
+R3S: Raydium Server Side Scripts
+--------------------------------
+
+With this files and a HTTP/PHP server, you can build very
+quickly a data repository server, allowing clients to get new files
+(and refresh old ones) from this server.
+Files are all stored in the same directory, since
+the client will rebuilt directory structure by itself.
+
+R3S support uploading, but you can also use a FTP server since Raydium
+client applications allows this.
+
+With R3S, FTP is slower than HTTP since no compression is used (R3S protocol
+is using gzip with HTTP) but is the only correct solution with big files, since
+most HTTP servers and proxies limits requests size.
+
+See configuration file, and place data in $data_dir directory.
+
+Please, note that Apache (or any other HTTP server) must have write rights
+in $data_dir directory:
+# chgrp apache files/
+# chmod g+w files/
+(You may have to change "apache" to "httpd", "www-data" or something else).
+
+For security reasons (uploaded PHP scripts), you should deny direct access
+to the "file/" directory with Apache:
+
+<Directory /home/raydium/repository/files>
+    Deny from all
+</Directory>
+
+You can create a .welcome message (one line only) in this directory.
+A .lock file in this directory will lock all upload support for this repository.
