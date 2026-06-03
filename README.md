@@ -103,7 +103,7 @@ Kids mode unlocks all tracks (no need to complete beginners mode first) and show
 sudo cmake --install .
 ```
 
-The game expects data files (`rayphp/`, textures, sounds, etc.) relative to the working directory. Run from the project root or install first.
+The game expects data files (textures, sounds, etc.) relative to the working directory. Run from the project root or install first.
 
 PHP scripts at the root of the repo (`anim.php`, `mania_localtracks.php`, etc.) must be copied or symlinked into the game's data directory:
 
